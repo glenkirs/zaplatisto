@@ -1,4 +1,4 @@
-# E-commerce Iiko
+# E-commerce iiko
 Сервис для работы с iiko
 
 ## Установка

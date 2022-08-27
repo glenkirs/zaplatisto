@@ -1,0 +1,22 @@
+root: true
+
+extends:
+  - airbnb
+
+rules:
+  func-names:
+    - error
+    - never
+  no-param-reassign:
+    - error
+    - ignorePropertyModificationsFor:
+      - ctx
+      - err
+      - values
+      props: true
+
+env:
+  browser: false
+  node: true
+  es6: true
+  mocha: true

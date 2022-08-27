@@ -1,0 +1,31 @@
+{
+  "name": "ec-iiko",
+  "version": "1.0.0",
+  "description": "",
+  "main": "src/index.js",
+  "scripts": {
+    "dev": "nodemon src/index.js",
+    "prod": "node src/index.js",
+    "sequelize": "./node_modules/.bin/sequelize",
+    "migrate": "npm run sequelize db:migrate"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "crypto-js": "^4.0.0",
+    "ec-constants": "git+https://gitlab.2-berega.ru/ec/ec-constants.git",
+    "ec-errors": "git+https://gitlab.2-berega.ru/ec/ec-errors.git",
+    "fast-safe-stringify": "^2.0.2",
+    "koa": "^2.13.1",
+    "koa-bodyparser": "^4.3.0",
+    "koa-router": "^10.0.0",
+    "lodash": "^4.17.20",
+    "log4js": "^3.0.6",
+    "moment": "^2.29.1",
+    "mysql2": "^2.2.5",
+    "request": "^2.88.2",
+    "request-promise-native": "^1.0.9",
+    "sequelize": "^6.5.0",
+    "sequelize-cli": "^6.2.0"
+  }
+}
