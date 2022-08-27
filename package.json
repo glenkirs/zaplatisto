@@ -13,19 +13,23 @@
   "license": "ISC",
   "dependencies": {
     "crypto-js": "^4.0.0",
-    "ec-constants": "git+https://gitlab.2-berega.ru/ec/ec-constants.git",
-    "ec-errors": "git+https://gitlab.2-berega.ru/ec/ec-errors.git",
     "fast-safe-stringify": "^2.0.2",
     "koa": "^2.13.1",
     "koa-bodyparser": "^4.3.0",
     "koa-router": "^10.0.0",
     "lodash": "^4.17.20",
+    "lodash.get": "^4.4.2",
+    "lodash.has": "^4.5.2",
+    "lodash.pick": "^4.4.0",
     "log4js": "^3.0.6",
     "moment": "^2.29.1",
     "mysql2": "^2.2.5",
     "request": "^2.88.2",
     "request-promise-native": "^1.0.9",
     "sequelize": "^6.5.0",
-    "sequelize-cli": "^6.2.0"
+    "sequelize-cli": "^6.2.0",
+    "jsonwebtoken": "^8.4.0",
+    "mongodb": "^2.2.36",
+    "uuid": "^8.3.2"
   }
 }

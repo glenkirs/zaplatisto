@@ -4,9 +4,9 @@ const logger = require('../helpers/logger').getLogger();
 const { _ } = require('lodash');
 
 module.exports = {
-  username: env.SEQUELIZE_USER || 'ecIiko',
-  password: env.SEQUELIZE_PASS || 'ecIiko',
-  database: env.SEQUELIZE_DB || 'ecIiko',
+  username: env.SEQUELIZE_USER || 'root',
+  password: env.SEQUELIZE_PASS || 'secret',
+  database: env.SEQUELIZE_DB || 'zaplatisto',
   host: env.SEQUELIZE_HOST || 'localhost',
   port: env.SEQUELIZE_PORT || '3306',
   dialect: env.SEQUELIZE_DIALECT || 'mysql',

@@ -1,12 +1,10 @@
 const Router = require('koa-router');
-const iiko = require('../../controllers/iiko');
+const token = require('../../controllers/token');
 
 const router = new Router();
 
 router
-  .get('/iiko/organization/:id', iiko.getOrganization)
-  .post('/iiko/update', iiko.updateSettings)
-  .post('/auth/iiko/token', iiko.getToken)
+  .get('/auth/token', token.generateToken)
 ;
 
 module.exports = router;

@@ -1,4 +1,4 @@
-const errors = require('ec-errors');
+const errors = require('../../helpers/errors');
 const logger = require('../../helpers/logger').getLogger();
 const { logResponse } = require('./logRequestResponse');
 

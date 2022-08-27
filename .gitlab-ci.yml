@@ -1,59 +1,63 @@
 stages:
   - build
   - deploy_dev
-  - deploy_main
   - deploy_prod
 
 build:
   stage: build
   script:
-    - echo "ENV PROXY_URL=$PROXY_URL" >> Dockerfile
-    - echo "ENV NSQD_HOST=$NSQD_HOST" >> Dockerfile
-    - echo "ENV NSQD_PORT=$NSQD_PORT" >> Dockerfile
+    - echo "ENV NODE_ENV=production" >> Dockerfile
+    - echo "ENV SERVICE_HOST=localhost" >> Dockerfile
+    - echo "ENV JWT_SECRET=$JWT_SECRET" >> Dockerfile
+    - echo "ENV EXPIRES_IN=$EXPIRES_IN" >> Dockerfile
     - echo "ENV SERVICE_PORT=$SERVICE_PORT" >> Dockerfile
-    - sed -i "s/https:\/\/gitlab.2-berega.ru/https:\/\/gitlab-ci-token:$CI_BUILD_TOKEN@gitlab.2-berega.ru/g" package.json
-    - docker login -u $CI_REGISTRY_USER -p $CI_REGISTRY_PASSWORD $CI_REGISTRY
-    - docker build --pull -t "$CI_REGISTRY_IMAGE:$CI_BUILD_REF_SLUG-$CI_PIPELINE_ID" -t "$CI_REGISTRY_IMAGE:$CI_BUILD_REF_SLUG-latest" .
-    - docker push "$CI_REGISTRY_IMAGE:$CI_BUILD_REF_SLUG-$CI_PIPELINE_ID"
-    - docker push "$CI_REGISTRY_IMAGE:$CI_BUILD_REF_SLUG-latest"
+    - echo "ENV SEQUELIZE_USER=$SEQUELIZE_USER" >> Dockerfile
+    - echo "ENV SEQUELIZE_PASS=$SEQUELIZE_PASS" >> Dockerfile
+    - echo "ENV SEQUELIZE_DB=$SEQUELIZE_DB" >> Dockerfile
+    - echo "ENV SEQUELIZE_HOST=$SEQUELIZE_HOST" >> Dockerfile
+    - echo "ENV SEQUELIZE_PORT=$SEQUELIZE_PORT" >> Dockerfile
+    - sed -i "s/https:\/\/gitlab.zaplatisto.ru/https:\/\/gitlab-ci-token:$CI_JOB_TOKEN@gitlab.zaplatisto.ru/g" package.json
+    - docker build --pull -f Dockerfile -t $CI_REGISTRY/$CI_PROJECT_NAMESPACE/$CI_PROJECT_NAME:$CI_PIPELINE_ID .
+    - docker push $CI_REGISTRY/$CI_PROJECT_NAMESPACE/$CI_PROJECT_NAME:$CI_PIPELINE_ID
+    - docker image rm $CI_REGISTRY/$CI_PROJECT_NAMESPACE/$CI_PROJECT_NAME:$CI_PIPELINE_ID
   only:
     - dev
-    - main
 
 deploy_dev:
   stage: deploy_dev
   script:
     - ssh $DEV_USER@$DEV_HOST kubectl set image deployment/iiko iiko="$CI_REGISTRY_IMAGE:$CI_BUILD_REF_SLUG-$CI_PIPELINE_ID"
-
+    - mkdir -p ~/.ssh
+    - echo "$SSH_PRIVATE_KEY" > ~/.ssh/id_rsa
+    - chmod 600 ~/.ssh/id_rsa
+    - '[[ -f /.dockerenv ]] && echo -e "Host *\n\tStrictHostKeyChecking no\n\n" > ~/.ssh/config'
+    - ssh $DEV_USER@$DEV_HOST docker login -u gitlab-ci-token -p $CI_BUILD_TOKEN $CI_REGISTRY
+    - ssh $DEV_USER@$DEV_HOST docker pull $CI_REGISTRY/$CI_PROJECT_NAMESPACE/$CI_PROJECT_NAME:$CI_PIPELINE_ID
+    - ssh $DEV_USER@$DEV_HOST docker container rm -f dev_panel || true
+    - ssh $DEV_USER@$DEV_HOST docker run -d -p 3000:3000/tcp --name dev_panel $CI_REGISTRY/$CI_PROJECT_NAMESPACE/$CI_PROJECT_NAME:$CI_PIPELINE_ID
   only:
     - dev
 
-deploy_main:
-  stage: deploy_main
-  script:
-    - docker login -u $CI_REGISTRY_USER -p $CI_REGISTRY_PASSWORD $CI_REGISTRY
-    - echo $G_STAGE | docker login -u _json_key --password-stdin $G_HOST
-    - docker pull "$CI_REGISTRY_IMAGE:$CI_BUILD_REF_SLUG-$CI_PIPELINE_ID"
-    - docker tag $CI_REGISTRY_IMAGE:$CI_BUILD_REF_SLUG-$CI_PIPELINE_ID $G_STAGE_PR/$CI_PROJECT_NAMESPACE/$CI_PROJECT_NAME:$CI_BUILD_REF_SLUG-$CI_PIPELINE_ID
-    - docker push $G_STAGE_PR/$CI_PROJECT_NAMESPACE/$CI_PROJECT_NAME:$CI_BUILD_REF_SLUG-$CI_PIPELINE_ID
-    - ssh $STAGE_USER@$STAGE_HOST kubectl set image deployment/iiko iiko="$G_STAGE_PR/$CI_PROJECT_NAMESPACE/$CI_PROJECT_NAME:$CI_BUILD_REF_SLUG-$CI_PIPELINE_ID"
-  only:
-    - main
-
 deploy_prod:
   stage: deploy_prod
+  tags:
+    - shell
   script:
+    - mkdir -p ~/.ssh
+    - echo "$SSH_PRIVATE_KEY" > ~/.ssh/id_rsa
+    - chmod 600 ~/.ssh/id_rsa
+    - '[[ -f /.dockerenv ]] && echo -e "Host *\n\tStrictHostKeyChecking no\n\n" > ~/.ssh/config'
     - docker login -u $CI_REGISTRY_USER -p $CI_REGISTRY_PASSWORD $CI_REGISTRY
-    - echo $G_PROD | docker login -u _json_key --password-stdin $G_HOST
-    - docker pull $CI_REGISTRY_IMAGE:main-latest
-    - docker tag $CI_REGISTRY_IMAGE:main-latest $CI_REGISTRY_IMAGE:$CI_BUILD_REF_SLUG-$CI_PIPELINE_ID
-    - docker tag $CI_REGISTRY_IMAGE:main-latest $CI_REGISTRY_IMAGE:$CI_BUILD_REF_SLUG-latest
+    - echo $G_PROD | docker login -u json_key --password-stdin $G_HOST
+    - docker pull $CI_REGISTRY_IMAGE:preprod-latest
+    - docker tag $CI_REGISTRY_IMAGE:preprod-latest $CI_REGISTRY_IMAGE:$CI_BUILD_REF_SLUG-$CI_PIPELINE_ID
+    - docker tag $CI_REGISTRY_IMAGE:preprod-latest $CI_REGISTRY_IMAGE:$CI_BUILD_REF_SLUG-latest
     - docker push $CI_REGISTRY_IMAGE:$CI_BUILD_REF_SLUG-$CI_PIPELINE_ID
     - docker push $CI_REGISTRY_IMAGE:$CI_BUILD_REF_SLUG-latest
     - docker tag $CI_REGISTRY_IMAGE:$CI_BUILD_REF_SLUG-$CI_PIPELINE_ID $G_PROD_PR/$CI_PROJECT_NAMESPACE/$CI_PROJECT_NAME:$CI_BUILD_REF_SLUG-$CI_PIPELINE_ID
     - docker push $G_PROD_PR/$CI_PROJECT_NAMESPACE/$CI_PROJECT_NAME:$CI_BUILD_REF_SLUG-$CI_PIPELINE_ID
     - docker tag $CI_REGISTRY_IMAGE:$CI_BUILD_REF_SLUG-$CI_PIPELINE_ID $G_PROD_PR/$CI_PROJECT_NAMESPACE/$CI_PROJECT_NAME:$CI_BUILD_REF_SLUG-$CI_PIPELINE_ID
     - docker push $G_PROD_PR/$CI_PROJECT_NAMESPACE/$CI_PROJECT_NAME:$CI_BUILD_REF_SLUG-$CI_PIPELINE_ID
-    - ssh $PROD_USER@$PROD_HOST kubectl set image deployment/iiko iiko="$G_PROD_PR/$CI_PROJECT_NAMESPACE/$CI_PROJECT_NAME:$CI_BUILD_REF_SLUG-$CI_PIPELINE_ID"
+    - ssh $PROD_USER@$PROD_HOST kubectl set image deployment/panel panel="$G_PROD_PR/$CI_PROJECT_NAMESPACE/$CI_PROJECT_NAME:$CI_BUILD_REF_SLUG-$CI_PIPELINE_ID"
   only:
     - prod

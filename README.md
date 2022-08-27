@@ -1,5 +1,5 @@
-# E-commerce Iiko
-Сервис для работы с iiko
+# Zaplatisto Back-end
+Сервис для Zaplatisto API
 
 ## Установка
 
