@@ -1,10 +1,41 @@
 stages:
+  - config
   - build
-  - deploy_dev
-  - deploy_prod
+  - deploy
 
-build:
+before_script:
+  - echo "$CI_REGISTRY_PASSWORD" | docker login -u "$CI_REGISTRY_USER" $CI_REGISTRY --password-stdin
+
+set_dev:
+  stage: config
+  tags:
+    - shell
+  script:
+    - echo "export API_HOST=apidev.zaplatisto.ru" > envfile
+
+  artifacts:
+    paths:
+      - envfile
+  only:
+    - dev
+
+set_prod:
+  stage: config
+  tags:
+    - shell
+  script:
+    - echo "export API_HOST=api.zaplatisto.ru" > envfile
+
+  artifacts:
+    paths:
+      - envfile
+  only:
+    - master
+
+build-backend-dev:
   stage: build
+  tags:
+    - shell
   script:
     - echo "ENV NODE_ENV=production" >> Dockerfile
     - echo "ENV SERVICE_HOST=localhost" >> Dockerfile
@@ -24,22 +55,7 @@ build:
     - dev
 
 deploy_dev:
-  stage: deploy_dev
-  script:
-    - ssh $DEV_USER@$DEV_HOST kubectl set image deployment/iiko iiko="$CI_REGISTRY_IMAGE:$CI_BUILD_REF_SLUG-$CI_PIPELINE_ID"
-    - mkdir -p ~/.ssh
-    - echo "$SSH_PRIVATE_KEY" > ~/.ssh/id_rsa
-    - chmod 600 ~/.ssh/id_rsa
-    - '[[ -f /.dockerenv ]] && echo -e "Host *\n\tStrictHostKeyChecking no\n\n" > ~/.ssh/config'
-    - ssh $DEV_USER@$DEV_HOST docker login -u gitlab-ci-token -p $CI_BUILD_TOKEN $CI_REGISTRY
-    - ssh $DEV_USER@$DEV_HOST docker pull $CI_REGISTRY/$CI_PROJECT_NAMESPACE/$CI_PROJECT_NAME:$CI_PIPELINE_ID
-    - ssh $DEV_USER@$DEV_HOST docker container rm -f dev_panel || true
-    - ssh $DEV_USER@$DEV_HOST docker run -d -p 3000:3000/tcp --name dev_panel $CI_REGISTRY/$CI_PROJECT_NAMESPACE/$CI_PROJECT_NAME:$CI_PIPELINE_ID
-  only:
-    - dev
-
-deploy_prod:
-  stage: deploy_prod
+  stage: deploy
   tags:
     - shell
   script:
@@ -47,17 +63,25 @@ deploy_prod:
     - echo "$SSH_PRIVATE_KEY" > ~/.ssh/id_rsa
     - chmod 600 ~/.ssh/id_rsa
     - '[[ -f /.dockerenv ]] && echo -e "Host *\n\tStrictHostKeyChecking no\n\n" > ~/.ssh/config'
-    - docker login -u $CI_REGISTRY_USER -p $CI_REGISTRY_PASSWORD $CI_REGISTRY
-    - echo $G_PROD | docker login -u json_key --password-stdin $G_HOST
-    - docker pull $CI_REGISTRY_IMAGE:preprod-latest
-    - docker tag $CI_REGISTRY_IMAGE:preprod-latest $CI_REGISTRY_IMAGE:$CI_BUILD_REF_SLUG-$CI_PIPELINE_ID
-    - docker tag $CI_REGISTRY_IMAGE:preprod-latest $CI_REGISTRY_IMAGE:$CI_BUILD_REF_SLUG-latest
-    - docker push $CI_REGISTRY_IMAGE:$CI_BUILD_REF_SLUG-$CI_PIPELINE_ID
-    - docker push $CI_REGISTRY_IMAGE:$CI_BUILD_REF_SLUG-latest
-    - docker tag $CI_REGISTRY_IMAGE:$CI_BUILD_REF_SLUG-$CI_PIPELINE_ID $G_PROD_PR/$CI_PROJECT_NAMESPACE/$CI_PROJECT_NAME:$CI_BUILD_REF_SLUG-$CI_PIPELINE_ID
-    - docker push $G_PROD_PR/$CI_PROJECT_NAMESPACE/$CI_PROJECT_NAME:$CI_BUILD_REF_SLUG-$CI_PIPELINE_ID
-    - docker tag $CI_REGISTRY_IMAGE:$CI_BUILD_REF_SLUG-$CI_PIPELINE_ID $G_PROD_PR/$CI_PROJECT_NAMESPACE/$CI_PROJECT_NAME:$CI_BUILD_REF_SLUG-$CI_PIPELINE_ID
-    - docker push $G_PROD_PR/$CI_PROJECT_NAMESPACE/$CI_PROJECT_NAME:$CI_BUILD_REF_SLUG-$CI_PIPELINE_ID
-    - ssh $PROD_USER@$PROD_HOST kubectl set image deployment/panel panel="$G_PROD_PR/$CI_PROJECT_NAMESPACE/$CI_PROJECT_NAME:$CI_BUILD_REF_SLUG-$CI_PIPELINE_ID"
+    - ssh $DEV_USER@$DEV_HOST docker login -u gitlab-ci-token -p $CI_BUILD_TOKEN $CI_REGISTRY
+    - ssh $DEV_USER@$DEV_HOST docker pull $CI_REGISTRY/$CI_PROJECT_NAMESPACE/$CI_PROJECT_NAME:$CI_PIPELINE_ID
+    - ssh $DEV_USER@$DEV_HOST docker container rm -f dev_front || true
+    - ssh $DEV_USER@$DEV_HOST docker run -d -p $SERVICE_PORT:$SERVICE_PORT/tcp --name dev_front $CI_REGISTRY/$CI_PROJECT_NAMESPACE/$CI_PROJECT_NAME:$CI_PIPELINE_ID
+  only:
+    - dev
+
+deploy_prod:
+  stage: deploy
+  tags:
+    - shell
+  script:
+    - mkdir -p ~/.ssh
+    - echo "$SSH_PRIVATE_KEY" > ~/.ssh/id_rsa
+    - chmod 600 ~/.ssh/id_rsa
+    - '[[ -f /.dockerenv ]] && echo -e "Host *\n\tStrictHostKeyChecking no\n\n" > ~/.ssh/config'
+    - ssh $DEV_USER@$DEV_HOST docker login -u gitlab-ci-token -p $CI_BUILD_TOKEN $CI_REGISTRY
+    - ssh $DEV_USER@$DEV_HOST docker pull $CI_REGISTRY/$CI_PROJECT_NAMESPACE/$CI_PROJECT_NAME:$CI_PIPELINE_ID
+    - ssh $DEV_USER@$DEV_HOST docker container rm -f prod_front || true
+    - ssh $DEV_USER@$DEV_HOST docker run -d -p $SERVICE_PORT:$SERVICE_PORT/tcp --name prod_front $CI_REGISTRY/$CI_PROJECT_NAMESPACE/$CI_PROJECT_NAME:$CI_PIPELINE_ID
   only:
     - prod
