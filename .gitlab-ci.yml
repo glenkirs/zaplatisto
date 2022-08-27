@@ -65,8 +65,8 @@ deploy_dev:
     - '[[ -f /.dockerenv ]] && echo -e "Host *\n\tStrictHostKeyChecking no\n\n" > ~/.ssh/config'
     - ssh $DEV_USER@$DEV_HOST docker login -u gitlab-ci-token -p $CI_BUILD_TOKEN $CI_REGISTRY
     - ssh $DEV_USER@$DEV_HOST docker pull $CI_REGISTRY/$CI_PROJECT_NAMESPACE/$CI_PROJECT_NAME:$CI_PIPELINE_ID
-    - ssh $DEV_USER@$DEV_HOST docker container rm -f dev_front || true
-    - ssh $DEV_USER@$DEV_HOST docker run -d -p $SERVICE_PORT:$SERVICE_PORT/tcp --name dev_front $CI_REGISTRY/$CI_PROJECT_NAMESPACE/$CI_PROJECT_NAME:$CI_PIPELINE_ID
+    - ssh $DEV_USER@$DEV_HOST docker container rm -f dev_backend || true
+    - ssh $DEV_USER@$DEV_HOST docker run -d -p $SERVICE_PORT:$SERVICE_PORT/tcp --name dev_backend $CI_REGISTRY/$CI_PROJECT_NAMESPACE/$CI_PROJECT_NAME:$CI_PIPELINE_ID
   only:
     - dev
 
