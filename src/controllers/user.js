@@ -173,9 +173,8 @@ smsc.configure({
 };
 
 /**
- * @api {post} /auth/token Генерация токена
+ * @api {post} /user/info Информация о пользователе
  * @apiGroup User
- * @apiBody {String} phone Телефон в формате 79992223344
  */
  const info = async (ctx) => {
   if(ctx.state.user && ctx.state.user.id){
