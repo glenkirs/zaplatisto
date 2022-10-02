@@ -53,6 +53,9 @@ jspm_packages
 # Apidoc files
 /doc
 
+#Static files
+/static
+
 .editorconfig
 .vscode
 1.bat

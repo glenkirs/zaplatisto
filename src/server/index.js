@@ -2,16 +2,20 @@ const Koa = require('koa');
 const Http = require('http');
 const bodyParser = require('koa-bodyparser');
 const router = require('./routes');
+const { rules } = require('./routes/rbac-rules');
 const config = require('../config');
-const ErrorHandling = require('./middlewares/error-handling');
 const logger = require('../helpers/logger').getLogger();
+const ErrorHandling = require('./middlewares/error-handling');
 const RequestId = require('./middlewares/request-id');
-const { logRequestResponse } = require('./middlewares/logRequestResponse');
+const Rbac = require('./middlewares/rbac');
+const jwt = require('jsonwebtoken');
+const { logRequestResponse, resolveAuthorizationHeader } = require('./middlewares/logRequestResponse');
 
 const parseState = (ctx, next) => {
   try {
-    if (ctx.headers.user) {
-      ctx.state.user = JSON.parse(ctx.headers.user);
+    const token = resolveAuthorizationHeader(ctx, ctx.headers.authorization);
+    if (token) {
+      ctx.state.user = jwt.verify(token, config.jwtSecret);
     } else {
       ctx.state.user = { role: 'guest' };
     }
@@ -31,6 +35,7 @@ const start = () => new Promise((resolve, reject) => {
   app.use(ErrorHandling);
   app.use(bodyParser());
   app.use(logRequestResponse);
+  app.use(Rbac(rules));
   app.use(router.routes());
 
   const server = Http.createServer(app.callback()).listen(config.port, async (err) => {

@@ -7,5 +7,8 @@
 # Запускаем миграцию
 npm run migrate
 
+# Запускаем генерацию документации
+npm run doc
+
 # Запускаем само приложение
 exec node src/index.js

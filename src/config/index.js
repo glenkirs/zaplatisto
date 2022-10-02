@@ -6,6 +6,10 @@ const host = env.SERVICE_HOST || 'localhost';
 
 const jwtSecret = env.JWT_SECRET || 'secret2';
 const expiresIn = env.EXPIRES_IN || '30d';
+const sms = {
+  login: env.SMS_LOGIN || 'zaplatisto',
+  password: env.SMS_PASSWORD || 'zxcasd12'
+}
 
 const defaultConfig = {
   serviceName,
@@ -13,6 +17,7 @@ const defaultConfig = {
   host,
   jwtSecret,
   expiresIn,
+  sms
 };
 
 const config = {

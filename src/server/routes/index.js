@@ -1,10 +1,12 @@
 const Router = require('koa-router');
-const token = require('../../controllers/token');
+const user = require('./user');
+const services = require('./services');
 
 const router = new Router();
 
 router
-  .get('/auth/token', token.generateToken)
+  .use('/user', user.routes(), user.allowedMethods())
+  .use('/services', services.routes(), services.allowedMethods())
 ;
 
 module.exports = router;
