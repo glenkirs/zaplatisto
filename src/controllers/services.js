@@ -12,6 +12,7 @@ const Plans = models.plans;
 
 /**
  * @api {post} /services/add Добавление сервиса
+ * @apiGroup Services
  * @apiBody {String} [name] Название сервиса
  * @apiBody {String} [img] Изображение сервиса (необязательно)
  * @apiBody {String} [label] Лейбл сервиса (необязательно)
@@ -49,6 +50,7 @@ const add = async (ctx) => {
 
 /**
  * @api {post} /services/edit Редактирование сервиса
+ * @apiGroup Services
  * @apiBody {Number} [id] ID сервиса
  * @apiBody {String} [name] Название сервиса
  * @apiBody {String} [img] Изображение сервиса (необязательно)
@@ -100,6 +102,7 @@ const edit = async (ctx) => {
 
 /**
  * @api {delete} /services/remove Удаление сервиса
+ * @apiGroup Services
  * @apiBody {Number} [id] ID сервиса
  */
 const remove = async (ctx) => {
@@ -118,6 +121,7 @@ const remove = async (ctx) => {
 
 /**
  * @api {post} /services/upload Загрузка изображения сервиса
+ * @apiGroup Services
  * @apiBody {File} [file] Файл изображения
  */
 const upload = async (ctx) => {
@@ -144,6 +148,7 @@ const upload = async (ctx) => {
 
 /**
  * @api {post} /services/plan/add Добавление тарифа
+ * @apiGroup Services
  * @apiBody {Number} [service] Сервис
  * @apiBody {String} [title] Название
  * @apiBody {String} [sub_title] Дополнительное название (необязательно)
@@ -186,6 +191,7 @@ const planAdd = async (ctx) => {
 
 /**
  * @api {post} /services/plan/edit Редактирование тарифа
+ * @apiGroup Services
  * @apiBody {Number} [id] ID тарифа
  * @apiBody {String} [title] Название
  * @apiBody {String} [sub_title] Дополнительное название (необязательно)
@@ -227,6 +233,7 @@ const planAdd = async (ctx) => {
 
 /**
  * @api {delete} /services/plan/remove Удаление тарифа
+ * @apiGroup Services
  * @apiBody {Number} [id] ID тарифа
  */
 const planRemove = async (ctx) => {
@@ -244,6 +251,7 @@ const planRemove = async (ctx) => {
 
 /**
  * @api {post} /services Получение сервисов
+ * @apiGroup Services
  * @apiBody {String} [phone] Телефон в формате 79992223344
  */
 const getAll = async (ctx) => {
@@ -252,6 +260,7 @@ const getAll = async (ctx) => {
 
 /**
  * @api {post} /services/:id Получение сервиса
+ * @apiGroup Services
  * @apiBody {String} [phone] Телефон в формате 79992223344
  */
 const getOne = async (ctx) => {

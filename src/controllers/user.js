@@ -19,7 +19,9 @@ smsc.configure({
 
 /**
  * @api {post} /user/auth Авторизация пользователя
- * @apiBody {String} [phone] Телефон в формате 79992223344
+ * @apiGroup User
+ * @apiBody {String} phone Телефон в формате 79992223344
+ * @apiSuccess (200) {String} status  Если status == auth, пользователь авторизован, иначе перенаправлять на регистрацию (СМС уже отправлено).
  */
  const auth = async (ctx) => {
   const body = ctx.request.body;
@@ -62,7 +64,9 @@ smsc.configure({
 
 /**
  * @api {post} /user/sms Отправка смс при регистрации либо при повторной отправке
- * @apiBody {String} [phone] Телефон в формате 79992223344
+ * @apiGroup User
+ * @apiBody {String} phone Телефон в формате 79992223344
+ * @apiSuccess (200) {String} send  Success - отправлено / time - ожидение не завершено (1 мин).
  */
  const sms = async (ctx) => {
   const body = ctx.request.body;
@@ -102,8 +106,11 @@ smsc.configure({
 
 /**
  * @api {post} /user/sms/verify Подтверждение отправленного СМС кода
- * @apiBody {String} [phone] Телефон в формате 79992223344
- * @apiBody {String} [code] Код из СМС
+ * @apiGroup User
+ * @apiBody {String} phone Телефон в формате 79992223344
+ * @apiBody {String} code Код из СМС
+ * @apiSuccess (200) {String} verify  Успешная верификация
+ * @apiError verify Код не верный
  */
  const smsVerify = async (ctx) => {
   const body = ctx.request.body;
@@ -121,9 +128,12 @@ smsc.configure({
 /**
  * @api {post} /user/register Регистрация пользователя
  * @apiDescription Конечная регистрация пользователя, после ввода пароля из СМС и заполнения формы с личными данными.
- * @apiBody {String} [phone] Телефон в формате 79992223344
- * @apiBody {String} [name] Имя
- * @apiBody {String} [email] E-mail
+ * @apiGroup User
+ * @apiBody {String} phone Телефон в формате 79992223344
+ * @apiBody {String} name Имя
+ * @apiBody {String} email E-mail
+ * @apiSuccess (200) {String} status Успешная регистрация
+ * @apiSuccess (200) {String} token  Bearer token.
  */
  const register = async (ctx) => {
   const body = ctx.request.body;
@@ -164,7 +174,8 @@ smsc.configure({
 
 /**
  * @api {post} /auth/token Генерация токена
- * @apiBody {String} [firstname] Optional Firstname of the User.
+ * @apiGroup User
+ * @apiBody {String} phone Телефон в формате 79992223344
  */
  const info = async (ctx) => {
   if(ctx.state.user && ctx.state.user.id){

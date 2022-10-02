@@ -14,6 +14,8 @@ const excludeRoles = (roles, toExclude) => {
 };
 
 const rules = [
+  { path: '^/doc', roles: ['*'], methods: ['GET'], action: actions.allow },
+
   { path: '^/user/auth', roles: ['*'], methods: ['POST'], action: actions.allow },
   { path: '^/user/sms', roles: ['*'], methods: ['POST'], action: actions.allow },
   { path: '^/user/register', roles: ['*'], methods: ['POST'], action: actions.allow },
