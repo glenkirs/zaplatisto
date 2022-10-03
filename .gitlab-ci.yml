@@ -26,8 +26,8 @@ build_dev:
     - echo "SEQUELIZE_HOST=$SEQUELIZE_HOST" >> .env
     - echo "SEQUELIZE_PORT=$SEQUELIZE_PORT" >> .env
     - sed -i "s/https:\/\/gitlab.zaplatisto.ru/https:\/\/gitlab-ci-token:$CI_JOB_TOKEN@gitlab.zaplatisto.ru/g" package.json
-    - docker-compose -p ${DOCKER_IMAGE_NAME} -f ${DOCKER_COMPOSE} build
-    - docker-compose -p ${DOCKER_IMAGE_NAME} -f ${DOCKER_COMPOSE} push
+    - docker compose -p ${DOCKER_IMAGE_NAME} -f ${DOCKER_COMPOSE} build
+    - docker compose -p ${DOCKER_IMAGE_NAME} -f ${DOCKER_COMPOSE} push
   only:
     - dev
 
@@ -40,9 +40,9 @@ deploy_dev:
     - echo "$SSH_PRIVATE_KEY" > ~/.ssh/id_rsa
     - chmod 600 ~/.ssh/id_rsa
     - '[[ -f /.dockerenv ]] && echo -e "Host *\n\tStrictHostKeyChecking no\n\n" > ~/.ssh/config'
-    - docker-compose -H "ssh://$DEV_USER@$DEV_HOST" -f ${DOCKER_COMPOSE} down
-    - docker-compose -H "ssh://$DEV_USER@$DEV_HOST" -f ${DOCKER_COMPOSE} pull
-    - docker-compose -H "ssh://$DEV_USER@$DEV_HOST" -f ${DOCKER_COMPOSE} up -d
+    - ssh $DEV_USER@$DEV_HOST docker login -u gitlab-ci-token -p $CI_BUILD_TOKEN $CI_REGISTRY
+    - docker-compose -H "ssh://$DEV_USER@$DEV_HOST" --file $DOCKER_COMPOSE pull
+    - docker-compose -H "ssh://$DEV_USER@$DEV_HOST" --file $DOCKER_COMPOSE up -d
   only:
     - dev
 
