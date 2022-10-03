@@ -11,16 +11,12 @@ services:
         - 127.0.0.1:3000:3000
     depends_on:
       - database
-    links:
-      - database:database
 
   database:
     container_name: database-$CI_PIPELINE_ID
     image: mariadb:10.7
     ports:
-      - 3306:3306
-    volumes:
-      - ~/apps/mariadb:/var/lib/mysql
+      - 127.0.0.1:3306:3306
     environment:
       - MYSQL_ROOT_PASSWORD=${SEQUELIZE_PASS}
       - MYSQL_PASSWORD=${SEQUELIZE_PASS}
