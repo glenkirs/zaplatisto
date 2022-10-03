@@ -15,16 +15,16 @@ build_dev:
   tags:
     - shell
   script:
-    - echo "NODE_ENV=prod" >> .env
-    - echo "SERVICE_HOST=localhost" >> .env
-    - echo "JWT_SECRET=$JWT_SECRET" >> .env
-    - echo "EXPIRES_IN=$EXPIRES_IN" >> .env
-    - echo "SERVICE_PORT=$SERVICE_PORT" >> .env
-    - echo "SEQUELIZE_USER=$SEQUELIZE_USER" >> .env
-    - echo "SEQUELIZE_PASS=$SEQUELIZE_PASS" >> .env
-    - echo "SEQUELIZE_DB=$SEQUELIZE_DB" >> .env
-    - echo "SEQUELIZE_HOST=$SEQUELIZE_HOST" >> .env
-    - echo "SEQUELIZE_PORT=$SEQUELIZE_PORT" >> .env
+    - echo "ENV NODE_ENV=prod" >> ${DOCKER_FILE}
+    - echo "ENV SERVICE_HOST=localhost" >> ${DOCKER_FILE}
+    - echo "ENV JWT_SECRET=$JWT_SECRET" >> ${DOCKER_FILE}
+    - echo "ENV EXPIRES_IN=$EXPIRES_IN" >> ${DOCKER_FILE}
+    - echo "ENV SERVICE_PORT=$SERVICE_PORT" >> ${DOCKER_FILE}
+    - echo "ENV SEQUELIZE_USER=$SEQUELIZE_USER" >> ${DOCKER_FILE}
+    - echo "ENV SEQUELIZE_PASS=$SEQUELIZE_PASS" >> ${DOCKER_FILE}
+    - echo "ENV SEQUELIZE_DB=$SEQUELIZE_DB" >> ${DOCKER_FILE}
+    - echo "ENV SEQUELIZE_HOST=$SEQUELIZE_HOST" >> ${DOCKER_FILE}
+    - echo "ENV SEQUELIZE_PORT=$SEQUELIZE_PORT" >> ${DOCKER_FILE}
     - sed -i "s/https:\/\/gitlab.zaplatisto.ru/https:\/\/gitlab-ci-token:$CI_JOB_TOKEN@gitlab.zaplatisto.ru/g" package.json
     - docker-compose -p ${DOCKER_IMAGE_NAME} -f ${DOCKER_COMPOSE} build --pull --no-cache
     - docker-compose -p ${DOCKER_IMAGE_NAME} -f ${DOCKER_COMPOSE} push
