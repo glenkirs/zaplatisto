@@ -1,56 +1,33 @@
 stages:
-  - config
   - build
   - deploy
+
+variables:
+  DOCKER_COMPOSE: docker/docker-compose.yml
+  DOCKER_IMAGE_NAME: backend_${CI_COMMIT_REF_SLUG}
+  DOCKER_FILE: docker/Dockerfile
 
 before_script:
   - echo "$CI_REGISTRY_PASSWORD" | docker login -u "$CI_REGISTRY_USER" $CI_REGISTRY --password-stdin
 
-set_dev:
-  stage: config
-  tags:
-    - shell
-  script:
-    - echo "export API_HOST=apidev.zaplatisto.ru" > envfile
-
-  artifacts:
-    paths:
-      - envfile
-  only:
-    - dev
-
-set_prod:
-  stage: config
-  tags:
-    - shell
-  script:
-    - echo "export API_HOST=api.zaplatisto.ru" > envfile
-
-  artifacts:
-    paths:
-      - envfile
-  only:
-    - master
-
-build-backend-dev:
+build_dev:
   stage: build
   tags:
     - shell
   script:
-    - echo "ENV NODE_ENV=production" >> Dockerfile
-    - echo "ENV SERVICE_HOST=localhost" >> Dockerfile
-    - echo "ENV JWT_SECRET=$JWT_SECRET" >> Dockerfile
-    - echo "ENV EXPIRES_IN=$EXPIRES_IN" >> Dockerfile
-    - echo "ENV SERVICE_PORT=$SERVICE_PORT" >> Dockerfile
-    - echo "ENV SEQUELIZE_USER=$SEQUELIZE_USER" >> Dockerfile
-    - echo "ENV SEQUELIZE_PASS=$SEQUELIZE_PASS" >> Dockerfile
-    - echo "ENV SEQUELIZE_DB=$SEQUELIZE_DB" >> Dockerfile
-    - echo "ENV SEQUELIZE_HOST=$SEQUELIZE_HOST" >> Dockerfile
-    - echo "ENV SEQUELIZE_PORT=$SEQUELIZE_PORT" >> Dockerfile
+    - echo "NODE_ENV=prod" >> .env
+    - echo "SERVICE_HOST=localhost" >> .env
+    - echo "JWT_SECRET=$JWT_SECRET" >> .env
+    - echo "EXPIRES_IN=$EXPIRES_IN" >> .env
+    - echo "SERVICE_PORT=$SERVICE_PORT" >> .env
+    - echo "SEQUELIZE_USER=$SEQUELIZE_USER" >> .env
+    - echo "SEQUELIZE_PASS=$SEQUELIZE_PASS" >> .env
+    - echo "SEQUELIZE_DB=$SEQUELIZE_DB" >> .env
+    - echo "SEQUELIZE_HOST=$SEQUELIZE_HOST" >> .env
+    - echo "SEQUELIZE_PORT=$SEQUELIZE_PORT" >> .env
     - sed -i "s/https:\/\/gitlab.zaplatisto.ru/https:\/\/gitlab-ci-token:$CI_JOB_TOKEN@gitlab.zaplatisto.ru/g" package.json
-    - docker build --pull -f Dockerfile -t $CI_REGISTRY/$CI_PROJECT_NAMESPACE/$CI_PROJECT_NAME:$CI_PIPELINE_ID .
-    - docker push $CI_REGISTRY/$CI_PROJECT_NAMESPACE/$CI_PROJECT_NAME:$CI_PIPELINE_ID
-    - docker image rm $CI_REGISTRY/$CI_PROJECT_NAMESPACE/$CI_PROJECT_NAME:$CI_PIPELINE_ID
+    - docker-compose -p ${DOCKER_IMAGE_NAME} -f ${DOCKER_COMPOSE} build
+    - docker-compose -p ${DOCKER_IMAGE_NAME} -f ${DOCKER_COMPOSE} push
   only:
     - dev
 
@@ -63,10 +40,9 @@ deploy_dev:
     - echo "$SSH_PRIVATE_KEY" > ~/.ssh/id_rsa
     - chmod 600 ~/.ssh/id_rsa
     - '[[ -f /.dockerenv ]] && echo -e "Host *\n\tStrictHostKeyChecking no\n\n" > ~/.ssh/config'
-    - ssh $DEV_USER@$DEV_HOST docker login -u gitlab-ci-token -p $CI_BUILD_TOKEN $CI_REGISTRY
-    - ssh $DEV_USER@$DEV_HOST docker pull $CI_REGISTRY/$CI_PROJECT_NAMESPACE/$CI_PROJECT_NAME:$CI_PIPELINE_ID
-    - ssh $DEV_USER@$DEV_HOST docker container rm -f dev_backend || true
-    - ssh $DEV_USER@$DEV_HOST docker run -d -p $SERVICE_PORT:$SERVICE_PORT/tcp --name dev_backend $CI_REGISTRY/$CI_PROJECT_NAMESPACE/$CI_PROJECT_NAME:$CI_PIPELINE_ID
+    - docker-compose -H "ssh://$DEV_USER@$DEV_HOST" -f ${DOCKER_COMPOSE} down --remove-orphans
+    - docker-compose -H "ssh://$DEV_USER@$DEV_HOST" -f ${DOCKER_COMPOSE} pull
+    - docker-compose -H "ssh://$DEV_USER@$DEV_HOST" -f ${DOCKER_COMPOSE} up -d
   only:
     - dev
 

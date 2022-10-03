@@ -1,0 +1,27 @@
+version: '3.6'
+
+services:
+  nginx:
+    image: $CI_REGISTRY_IMAGE/backend:$CI_PIPELINE_ID
+    build:
+      context: ../
+      dockerfile: docker/Dockerfile
+    restart: always
+    ports:
+        - 127.0.0.1:85:80
+    logging: &logging
+      driver: "json-file"
+      options:
+        max-size: "1m"
+        max-file: "1"
+  mariadb:
+    image: mariadb:10.7
+    ports:
+      - 3306:3306
+    volumes:
+      - ~/apps/mariadb:/var/lib/mysql
+    environment:
+      - MYSQL_ROOT_PASSWORD=${SEQUELIZE_PASS}
+      - MYSQL_PASSWORD=${SEQUELIZE_PASS}
+      - MYSQL_USER=${SEQUELIZE_USER}
+      - MYSQL_DATABASE=${SEQUELIZE_DB}
