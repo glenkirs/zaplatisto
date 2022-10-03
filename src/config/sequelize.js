@@ -7,7 +7,7 @@ module.exports = {
   username: env.SEQUELIZE_USER || 'root',
   password: env.SEQUELIZE_PASS || 'secret',
   database: env.SEQUELIZE_DB || 'zaplatisto',
-  host: env.SEQUELIZE_HOST || 'localhost',
+  host: env.SEQUELIZE_HOST || 'database',
   port: env.SEQUELIZE_PORT || '3306',
   dialect: env.SEQUELIZE_DIALECT || 'mysql',
   log: env.SEQUELIZE_LOG || 'enabled',
