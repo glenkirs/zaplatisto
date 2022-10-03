@@ -22,7 +22,7 @@ services:
     volumes:
       - ~/apps/mariadb:/var/lib/mysql
     environment:
-      - MYSQL_ROOT_PASSWORD=$SEQUELIZE_PASS
-      - MYSQL_PASSWORD=$SEQUELIZE_PASS
-      - MYSQL_USER=$SEQUELIZE_USER
-      - MYSQL_DATABASE=$SEQUELIZE_DB
+      - MYSQL_ROOT_PASSWORD=${SEQUELIZE_PASS}
+      - MYSQL_PASSWORD=${SEQUELIZE_PASS}
+      - MYSQL_USER=${SEQUELIZE_USER}
+      - MYSQL_DATABASE=${SEQUELIZE_DB}
