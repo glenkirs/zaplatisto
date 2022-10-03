@@ -40,9 +40,10 @@ deploy_dev:
     - echo "$SSH_PRIVATE_KEY" > ~/.ssh/id_rsa
     - chmod 600 ~/.ssh/id_rsa
     - '[[ -f /.dockerenv ]] && echo -e "Host *\n\tStrictHostKeyChecking no\n\n" > ~/.ssh/config'
-    - docker compose -H "ssh://$DEV_USER@$DEV_HOST" -f ${DOCKER_COMPOSE} down
-    - docker compose -H "ssh://$DEV_USER@$DEV_HOST" -f ${DOCKER_COMPOSE} pull
-    - docker compose -H "ssh://$DEV_USER@$DEV_HOST" -f ${DOCKER_COMPOSE} up -d
+    - ssh $DEV_USER@$DEV_HOST docker login -u gitlab-ci-token -p $CI_BUILD_TOKEN $CI_REGISTRY
+    - ssh $DEV_USER@$DEV_HOST docker pull $CI_REGISTRY_IMAGE/backend:$CI_PIPELINE_ID
+    - ssh $DEV_USER@$DEV_HOST docker container rm -f dev_backend || true
+    - ssh $DEV_USER@$DEV_HOST docker run -d -p $SERVICE_PORT:$SERVICE_PORT/tcp --name dev_backend $CI_REGISTRY_IMAGE/backend:$CI_PIPELINE_ID
   only:
     - dev
 
