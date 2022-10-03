@@ -40,8 +40,8 @@ deploy_dev:
     - echo "$SSH_PRIVATE_KEY" > ~/.ssh/id_rsa
     - chmod 600 ~/.ssh/id_rsa
     - '[[ -f /.dockerenv ]] && echo -e "Host *\n\tStrictHostKeyChecking no\n\n" > ~/.ssh/config'
-    - docker-compose -H "ssh://$DEV_USER@$DEV_HOST" -p ${DOCKER_IMAGE_NAME} -f docker/docker-compose.yml pull
-    - docker-compose -H "ssh://$DEV_USER@$DEV_HOST" -p ${DOCKER_IMAGE_NAME} -f docker/docker-compose.yml up -d
+    - docker compose -H "ssh://$DEV_USER@$DEV_HOST" -p ${DOCKER_IMAGE_NAME} -f docker/docker-compose.yml pull
+    - docker compose -H "ssh://$DEV_USER@$DEV_HOST" -p ${DOCKER_IMAGE_NAME} -f docker/docker-compose.yml up -d
   only:
     - dev
 
