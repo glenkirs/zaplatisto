@@ -41,8 +41,8 @@ deploy_dev:
     - chmod 600 ~/.ssh/id_rsa
     - '[[ -f /.dockerenv ]] && echo -e "Host *\n\tStrictHostKeyChecking no\n\n" > ~/.ssh/config'
     - ssh $DEV_USER@$DEV_HOST docker login -u gitlab-ci-token -p $CI_BUILD_TOKEN $CI_REGISTRY
-    - docker-compose -H "ssh://$DEV_USER@$DEV_HOST" --file ${DOCKER_COMPOSE} pull
-    - docker-compose -H "ssh://$DEV_USER@$DEV_HOST" --file ${DOCKER_COMPOSE} up -d
+    - docker-compose -H "ssh://$DEV_USER@$DEV_HOST" --file $DOCKER_COMPOSE pull
+    - docker-compose -H "ssh://$DEV_USER@$DEV_HOST" --file $DOCKER_COMPOSE up -d
   only:
     - dev
 
