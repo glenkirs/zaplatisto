@@ -14,13 +14,17 @@ const excludeRoles = (roles, toExclude) => {
 };
 
 const rules = [
+  //Static
   { path: '^/doc', roles: ['*'], methods: ['GET'], action: actions.allow },
+  { path: '^/test', roles: ['*'], methods: ['GET'], action: actions.allow },
 
+  //Users
   { path: '^/user/auth', roles: ['*'], methods: ['POST'], action: actions.allow },
   { path: '^/user/sms', roles: ['*'], methods: ['POST'], action: actions.allow },
   { path: '^/user/register', roles: ['*'], methods: ['POST'], action: actions.allow },
   { path: '^/user/info', roles: [r.user, r.admin], methods: ['GET'], action: actions.allow },
 
+  //Services
   { path: '^/services', roles: ['*'], methods: ['GET'], action: actions.allow },
   { path: `^/services/${intId}`, roles: ['*'], methods: ['GET'], action: actions.allow },
   { path: '^/services/add', roles: [r.admin], methods: ['POST'], action: actions.allow },
