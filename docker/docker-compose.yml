@@ -3,7 +3,7 @@ version: '3.6'
 services:
   app:
     container_name: app-$CI_PIPELINE_ID
-    env_file: ./.env
+    env_file: .env
     build:
       context: ../
       dockerfile: docker/Dockerfile
@@ -18,7 +18,7 @@ services:
   database:
     container_name: database-$CI_PIPELINE_ID
     image: mariadb:10.7
-    env_file: ./.env
+    env_file: .env
     ports:
       - 127.0.0.1:3306:3306
     volumes:
