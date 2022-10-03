@@ -18,7 +18,7 @@ services:
     container_name: database-$CI_PIPELINE_ID
     image: mariadb:10.7
     ports:
-      - 3306:3306
+      - 127.0.0.1:3306:3306
     volumes:
       - ~/apps/mariadb:/var/lib/mysql
     environment:
