@@ -14,4 +14,4 @@ CMD ["bash", "start.sh"]
 
 FROM nginx:1.16-alpine
 ADD ./docker/vhost.conf /etc/nginx/conf.d/default.conf
-COPY --from=builder /app/build/ /app/
+COPY --from=builder /app/ /app/
