@@ -8,10 +8,6 @@ const router = new Router();
 router
   .use('/user', user.routes(), user.allowedMethods())
   .use('/services', services.routes(), services.allowedMethods())
-
-  .get('/test', (ctx) => {
-    ctx.body = config;
-  })
 ;
 
 module.exports = router;
