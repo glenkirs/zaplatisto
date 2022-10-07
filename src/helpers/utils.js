@@ -1,3 +1,5 @@
+const moment = require('moment');
+const logger = require('../helpers/logger').getLogger();
 /**
 * Валидация телефона
 * @param {String} phone
@@ -26,8 +28,20 @@ const generateSmsCode = () => {
     return Math.floor(Math.random() * (9999 - 1000 + 1)) + 1000;
 }
 
+/**
+* Кол-во минут от времени значения
+* @return {Float}
+*/
+const checkMinutes = (date) => {
+    const now = new Date;
+    const dur = moment.duration({ from: now, to: moment(date) });
+    
+    return (dur.asMinutes() * -1).toFixed(2);
+}
+
 module.exports = {
     validatePhone,
     generateSmsCode,
     validateEmail,
+    checkMinutes,
 };

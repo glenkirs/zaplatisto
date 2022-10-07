@@ -35,6 +35,10 @@ const model = (sequelize, DataTypes) => {
       type: DataTypes.STRING,
       defaultValue: '0000',
     },
+    verify: {
+      type: DataTypes.INTEGER,
+      defaultValue: 0,
+    },
     createdAt: {
       type: DataTypes.DATE,
     },

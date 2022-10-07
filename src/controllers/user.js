@@ -19,6 +19,8 @@ smsc.configure({
 
 /**
  * @api {post} /user/auth Авторизация пользователя
+ * @apiDescription Проверяется авторизация пользователя, если он вводил код из СМС в течении 10 минут, то в ответе получаем token пользователя и status: 'auth'
+ * во всех остальных случаях, отпраляется СМС
  * @apiGroup User
  * @apiBody {String} phone Телефон в формате 79992223344
  * @apiSuccess (200) {String} status  Если status == auth, пользователь авторизован, иначе перенаправлять на регистрацию (СМС уже отправлено).
@@ -28,14 +30,15 @@ smsc.configure({
   if(!body.phone || (body.phone && !utils.validatePhone(body.phone))){
     throw new errors.ValidationError(`Не найдено или не валидно поле phone`);
   }
+  const sms = await SmsSend.findOneByPhone(body.phone);
   const user = await Users.findByPhone(body.phone);
-  if(user){
+  logger.debug(user , sms , sms.verify == 1 , utils.checkMinutes(sms.updatedAt) <= 10);
+  if(user && sms && sms.verify == 1 && utils.checkMinutes(sms.updatedAt) <= 10){
     ctx.body = {
       token: await token.generateToken(user.dataValues),
       status: 'auth'
     };
-  }else{
-    const sms = await SmsSend.findOneByPhone(body.phone);
+  }else if((sms && utils.checkMinutes(sms.updatedAt) >= 1) || !sms){
     smsc.get_balance((balance, raw, err, code) => {
       if(err) throw new errors.UnauthorizedError(`Ошибка авторизации в сервисе smsc.ru`);
       if(balance <= 1) throw new errors.ValidationError(`Недостаточно средств smsc.ru`);
@@ -48,7 +51,7 @@ smsc.configure({
     }, (data, raw, err, code) => {
       if(sms){
         SmsSend.update(
-          { code: codeSms },
+          { code: codeSms, verify: 0 },
           { where: { id: sms.id } }
         )
       }else{
@@ -59,6 +62,8 @@ smsc.configure({
       }
     });
     ctx.body = { status: 'sms' };
+  }else{
+    ctx.body = { status: 'time' };
   }
 };
 
@@ -75,7 +80,7 @@ smsc.configure({
   }
 
   const sms = await SmsSend.findOneByPhone(body.phone);
-  if((sms && (parseInt(moment(sms.updatedAt).fromNow()) >= 1 || isNaN(moment(sms.updatedAt).fromNow()))) || !sms){
+  if((sms && utils.checkMinutes(sms.updatedAt) >= 1) || !sms){
     smsc.get_balance((balance, raw, err, code) => {
       if(err) throw new errors.UnauthorizedError(`Ошибка авторизации в сервисе smsc.ru`);
       if(balance <= 1) throw new errors.ValidationError(`Недостаточно средств smsc.ru`);
@@ -88,7 +93,7 @@ smsc.configure({
     }, (data, raw, err, code) => {
       if(sms){
         SmsSend.update(
-          { code: codeSms },
+          { code: codeSms, verify: 0 },
           { where: { id: sms.id } }
         )
       }else{
@@ -119,6 +124,10 @@ smsc.configure({
   }
   const sms = await SmsSend.findOneByPhone(body.phone);
   if(sms && sms.code == body.code){
+    SmsSend.update(
+      { verify: 1 },
+      { where: { id: sms.id } }
+    )
     ctx.body = { verify: 'success' };
   }else{
     ctx.body = { verify: 'error' };
@@ -147,7 +156,8 @@ smsc.configure({
     throw new errors.ValidationError(`Не найдено или не валидно поле email`);
   }
   const user = await Users.findByPhone(body.phone);
-  if(user){
+  const sms = await SmsSend.findOneByPhone(body.phone);
+  if(user && sms && sms.verify == 1 && utils.checkMinutes(sms.updatedAt) <= 10){
     Users.update(
       { name: body.name, email: body.email },
       { where: { id: user.id } }
@@ -156,7 +166,7 @@ smsc.configure({
       token: await token.generateToken(user.dataValues),
       status: 'auth'
     };
-  }else{
+  }else if(!user && sms && sms.verify == 1 && utils.checkMinutes(sms.updatedAt) <= 10){
     await Users.create({
       name: body.name,
       email: body.email,
@@ -169,6 +179,8 @@ smsc.configure({
       token: await token.generateToken(newUser.dataValues),
       status: 'auth'
     };
+  }else{
+    ctx.body = { status: 'error' };
   }
 };
 
