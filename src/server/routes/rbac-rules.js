@@ -23,6 +23,8 @@ const rules = [
   { path: '^/user/sms', roles: ['*'], methods: ['POST'], action: actions.allow },
   { path: '^/user/register', roles: ['*'], methods: ['POST'], action: actions.allow },
   { path: '^/user/info', roles: [r.user, r.admin], methods: ['GET'], action: actions.allow },
+  { path: '^/user/update', roles: [r.user, r.admin], methods: ['PUT'], action: actions.allow },
+  { path: '^/user/delete', roles: [r.user, r.admin], methods: ['DELETE'], action: actions.allow },
 
   //Services
   { path: '^/services', roles: ['*'], methods: ['GET'], action: actions.allow },

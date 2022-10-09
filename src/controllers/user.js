@@ -188,6 +188,57 @@ smsc.configure({
 };
 
 /**
+ * @api {put} /user/update Обновление пользователя
+ * @apiGroup User
+ * @apiBody {String} phone Телефон в формате 79992223344
+ * @apiBody {String} name Имя
+ * @apiBody {String} email E-mail
+ * @apiSuccess (200) {String} status
+ */
+ const update = async (ctx) => {
+  const body = ctx.request.body;
+  if(!body.phone || (body.phone && !utils.validatePhone(body.phone))){
+    throw new errors.ValidationError(`Не найдено или не валидно поле phone`);
+  }
+  if(!body.name || (body.name && body.name.length < 2)){
+    throw new errors.ValidationError(`Не найдено или не валидно поле name`);
+  }
+  if(!body.email || (body.email && !utils.validateEmail(body.email))){
+    throw new errors.ValidationError(`Не найдено или не валидно поле email`);
+  }
+  const user = await Users.findByPhone(body.phone);
+  if(user){
+    Users.update(
+      { name: body.name, email: body.email },
+      { where: { id: user.id } }
+    )
+    ctx.body = { status: 'success' };
+  }else{
+    ctx.body = { status: 'error' };
+  }
+};
+
+/**
+ * @api {delete} /user/delete Удаление пользователя
+ * @apiGroup User
+ * @apiBody {String} phone Телефон в формате 79992223344
+ * @apiSuccess (200) {String} status Успешная регистрация
+ */
+ const deleteUser = async (ctx) => {
+  const body = ctx.request.body;
+  if(!body.phone || (body.phone && !utils.validatePhone(body.phone))){
+    throw new errors.ValidationError(`Не найдено или не валидно поле phone`);
+  }
+  const user = await Users.findByPhone(body.phone);
+  if(user){
+    await Users.destroy({ where: { id: user.id } });
+    ctx.body = { status: 'success' };
+  }else{
+    ctx.body = { status: 'error' };
+  }
+};
+
+/**
  * @api {post} /user/info Информация о пользователе
  * @apiGroup User
  */
@@ -205,4 +256,6 @@ module.exports = {
   info,
   sms,
   smsVerify,
+  update,
+  deleteUser,
 }

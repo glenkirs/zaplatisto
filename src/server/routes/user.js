@@ -8,6 +8,8 @@ const user = require('../../controllers/user');
 const router = new Router();
 router
     .post('/register', user.register)
+    .put('/update', user.update)
+    .del('/delete', user.deleteUser)
     .post('/auth', user.auth)
     .post('/sms', user.sms)
     .post('/sms/verify', user.smsVerify)
