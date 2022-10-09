@@ -31,13 +31,7 @@ smsc.configure({
     throw new errors.ValidationError(`Не найдено или не валидно поле phone`);
   }
   const sms = await SmsSend.findOneByPhone(body.phone);
-  const user = await Users.findByPhone(body.phone);
-  if(user && sms && sms.verify == 1 && utils.checkMinutes(sms.updatedAt) <= 10){
-    ctx.body = {
-      token: await token.generateToken(user.dataValues),
-      status: 'auth'
-    };
-  }else if((sms && utils.checkMinutes(sms.updatedAt) >= 1) || !sms){
+  if((sms && utils.checkMinutes(sms.updatedAt) >= 1) || !sms){
     smsc.get_balance((balance, raw, err, code) => {
       if(err) throw new errors.UnauthorizedError(`Ошибка авторизации в сервисе smsc.ru`);
       if(balance <= 1) throw new errors.ValidationError(`Недостаточно средств smsc.ru`);
