@@ -102,9 +102,9 @@ smsc.configure({
         })
       }
     });
-    ctx.body = { send: 'success' };
+    ctx.body = { status: 'success' };
   }else{
-    ctx.body = { send: 'time' };
+    ctx.body = { status: 'time' };
   }
 };
 
@@ -128,62 +128,27 @@ smsc.configure({
       { verify: 1 },
       { where: { id: sms.id } }
     )
+    if(user){
+      ctx.body = {
+        token: await token.generateToken(user.dataValues),
+      };
+    }else{
+      await Users.create({
+        phone: body.phone,
+        role: constants.roles.user,
+        balance: 0
+      });
+      const newUser = await Users.findByPhone(body.phone);
+      ctx.body = {
+        token: await token.generateToken(newUser.dataValues)
+      };
+    }
     ctx.body = {
       verify: 'success',
       user: user ? 'auth' : 'register',
     };
   }else{
     throw new errors.ForbiddenError(`Код из СМС не верен`);
-  }
-};
-
-/**
- * @api {post} /user/register Регистрация пользователя
- * @apiDescription Конечная регистрация пользователя, после ввода пароля из СМС и заполнения формы с личными данными.
- * @apiGroup User
- * @apiBody {String} phone Телефон в формате 79992223344
- * @apiBody {String} name Имя
- * @apiBody {String} email E-mail
- * @apiSuccess (200) {String} status Успешная регистрация
- * @apiSuccess (200) {String} token  Bearer token.
- */
- const register = async (ctx) => {
-  const body = ctx.request.body;
-  if(!body.phone || (body.phone && !utils.validatePhone(body.phone))){
-    throw new errors.ValidationError(`Не найдено или не валидно поле phone`);
-  }
-  if(!body.name || (body.name && body.name.length < 2)){
-    throw new errors.ValidationError(`Не найдено или не валидно поле name`);
-  }
-  if(!body.email || (body.email && !utils.validateEmail(body.email))){
-    throw new errors.ValidationError(`Не найдено или не валидно поле email`);
-  }
-  const user = await Users.findByPhone(body.phone);
-  const sms = await SmsSend.findOneByPhone(body.phone);
-  if(user && sms && sms.verify == 1 && utils.checkMinutes(sms.updatedAt) <= 10){
-    Users.update(
-      { name: body.name, email: body.email },
-      { where: { id: user.id } }
-    )
-    ctx.body = {
-      token: await token.generateToken(user.dataValues),
-      status: 'auth'
-    };
-  }else if(!user && sms && sms.verify == 1 && utils.checkMinutes(sms.updatedAt) <= 10){
-    await Users.create({
-      name: body.name,
-      email: body.email,
-      phone: body.phone,
-      role: constants.roles.user,
-      balance: 0
-    });
-    const newUser = await Users.findByPhone(body.phone);
-    ctx.body = {
-      token: await token.generateToken(newUser.dataValues),
-      status: 'auth'
-    };
-  }else{
-    ctx.body = { status: 'error' };
   }
 };
 
@@ -251,7 +216,6 @@ smsc.configure({
 };
 
 module.exports = {
-  register,
   auth,
   info,
   sms,

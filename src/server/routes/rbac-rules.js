@@ -21,7 +21,6 @@ const rules = [
   //Users
   { path: '^/user/auth', roles: ['*'], methods: ['POST'], action: actions.allow },
   { path: '^/user/sms', roles: ['*'], methods: ['POST'], action: actions.allow },
-  { path: '^/user/register', roles: ['*'], methods: ['POST'], action: actions.allow },
   { path: '^/user/info', roles: [r.user, r.admin], methods: ['GET'], action: actions.allow },
   { path: '^/user/update', roles: [r.user, r.admin], methods: ['PUT'], action: actions.allow },
   { path: '^/user/delete', roles: [r.user, r.admin], methods: ['DELETE'], action: actions.allow },

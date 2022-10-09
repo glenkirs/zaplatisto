@@ -33,7 +33,8 @@ const model = (sequelize, DataTypes) => {
     },
     name: {
       type: DataTypes.STRING,
-      defaultValue: '-',
+      defaultValue: null,
+      allowNull: true,
     },
     email: {
       type: DataTypes.STRING,
