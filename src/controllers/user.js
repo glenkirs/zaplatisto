@@ -133,7 +133,7 @@ smsc.configure({
       user: user ? 'auth' : 'register',
     };
   }else{
-    ctx.body = { verify: 'error' };
+    throw new errors.ForbiddenError(`Код из СМС не верен`);
   }
 };
 
@@ -234,7 +234,7 @@ smsc.configure({
     await Users.destroy({ where: { id: user.id } });
     ctx.body = { status: 'success' };
   }else{
-    ctx.body = { status: 'error' };
+    throw new errors.ForbiddenError(`Пользователь не найден`);
   }
 };
 
