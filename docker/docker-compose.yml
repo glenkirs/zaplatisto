@@ -29,7 +29,7 @@ services:
 
   phpmyadmin:
     image: phpmyadmin/phpmyadmin
-    container_name: pma
+    container_name: pma-$CI_PIPELINE_ID
     links:
       - database
     environment:
@@ -38,4 +38,4 @@ services:
       PMA_ARBITRARY: 1
     restart: always
     ports:
-      - 8081:80
+      - 127.0.0.1:8081:80
