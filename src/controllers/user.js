@@ -152,9 +152,6 @@ smsc.configure({
  */
  const update = async (ctx) => {
   const body = ctx.request.body;
-  if(!body.phone || (body.phone && !utils.validatePhone(body.phone))){
-    throw new errors.ValidationError(`Не найдено или не валидно поле phone`);
-  }
   if(!body.name || (body.name && body.name.length < 2)){
     throw new errors.ValidationError(`Не найдено или не валидно поле name`);
   }
