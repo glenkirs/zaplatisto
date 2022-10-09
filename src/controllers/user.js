@@ -143,10 +143,6 @@ smsc.configure({
         token: await token.generateToken(newUser.dataValues)
       };
     }
-    ctx.body = {
-      verify: 'success',
-      user: user ? 'auth' : 'register',
-    };
   }else{
     throw new errors.ForbiddenError(`Код из СМС не верен`);
   }
