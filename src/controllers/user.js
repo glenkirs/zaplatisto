@@ -32,7 +32,6 @@ smsc.configure({
   }
   const sms = await SmsSend.findOneByPhone(body.phone);
   const user = await Users.findByPhone(body.phone);
-  logger.debug(user , sms , sms.verify == 1 , utils.checkMinutes(sms.updatedAt) <= 10);
   if(user && sms && sms.verify == 1 && utils.checkMinutes(sms.updatedAt) <= 10){
     ctx.body = {
       token: await token.generateToken(user.dataValues),
@@ -123,12 +122,16 @@ smsc.configure({
     throw new errors.ValidationError(`Не найдено или не валидно поле phone`);
   }
   const sms = await SmsSend.findOneByPhone(body.phone);
-  if(sms && sms.code == body.code){
+  const user = await Users.findByPhone(body.phone);
+  if(sms && sms.code == body.code && utils.checkMinutes(sms.updatedAt) <= 10){
     SmsSend.update(
       { verify: 1 },
       { where: { id: sms.id } }
     )
-    ctx.body = { verify: 'success' };
+    ctx.body = {
+      verify: 'success',
+      user: user ? 'auth' : 'register',
+    };
   }else{
     ctx.body = { verify: 'error' };
   }
