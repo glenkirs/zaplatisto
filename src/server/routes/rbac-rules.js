@@ -24,6 +24,8 @@ const rules = [
   { path: '^/user/info', roles: [r.user, r.admin], methods: ['GET'], action: actions.allow },
   { path: '^/user/update', roles: [r.user, r.admin], methods: ['PUT'], action: actions.allow },
   { path: '^/user/delete', roles: [r.user, r.admin], methods: ['DELETE'], action: actions.allow },
+  { path: '^/user/all', roles: [r.admin], methods: ['GET'], action: actions.allow },
+  { path: '^/user/role', roles: [r.admin], methods: ['GET', 'PUT'], action: actions.allow },
 
   //Services
   { path: '^/services', roles: ['*'], methods: ['GET'], action: actions.allow },

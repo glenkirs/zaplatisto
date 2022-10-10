@@ -3,6 +3,7 @@
 const get = require('lodash.get');
 const has = require('lodash.has');
 const pick = require('lodash.pick');
+const { getLogger } = require('log4js');
 
 /**
  * Статусы ошибок
@@ -84,7 +85,7 @@ class BaseError extends Error {
     const result = pick(this, ['code', 'explain', 'message']);
 
     if (process.env.NODE_ENV !== 'production') {
-      result.details = this.details;
+      result.field = this.details;
     }
 
     return result;

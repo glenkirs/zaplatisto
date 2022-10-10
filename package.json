@@ -33,6 +33,7 @@
     "request-promise-native": "^1.0.9",
     "sequelize": "^6.5.0",
     "sequelize-cli": "^6.2.0",
+    "sequelize-cursor-pagination": "^3.2.0",
     "uuid": "^8.3.2"
   }
 }

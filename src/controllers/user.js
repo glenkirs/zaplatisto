@@ -7,6 +7,7 @@ const models = require('../sequelize/models');
 const logger = require('../helpers/logger').getLogger();
 const config = require('../config');
 const smsc = require('../helpers/smsc_api');
+const { _ } = require('lodash');
 
 const Users = models.users;
 const SmsSend = models.sms_send;
@@ -27,8 +28,8 @@ smsc.configure({
  */
  const auth = async (ctx) => {
   const body = ctx.request.body;
-  if(!body.phone || (body.phone && !utils.validatePhone(body.phone))){
-    throw new errors.ValidationError(`Не найдено или не валидно поле phone`);
+  if(!_.has(body, 'phone') || (body.phone && !utils.validatePhone(body.phone))){
+    throw new errors.ValidationError(`Не найдено или не валидно поле phone`, 'phone');
   }
   const sms = await SmsSend.findOneByPhone(body.phone);
   if((sms && utils.checkMinutes(sms.updatedAt) >= 1) || !sms){
@@ -68,8 +69,8 @@ smsc.configure({
  */
  const sms = async (ctx) => {
   const body = ctx.request.body;
-  if(!body.phone || (body.phone && !utils.validatePhone(body.phone))){
-    throw new errors.ValidationError(`Не найдено или не валидно поле phone`);
+  if(!_.has(body, 'phone') || (body.phone && !utils.validatePhone(body.phone))){
+    throw new errors.ValidationError(`Не найдено или не валидно поле phone`, 'phone');
   }
 
   const sms = await SmsSend.findOneByPhone(body.phone);
@@ -112,8 +113,8 @@ smsc.configure({
  */
  const smsVerify = async (ctx) => {
   const body = ctx.request.body;
-  if(!body.phone || (body.phone && !utils.validatePhone(body.phone))){
-    throw new errors.ValidationError(`Не найдено или не валидно поле phone`);
+  if(!_.has(body, 'phone') || (body.phone && !utils.validatePhone(body.phone))){
+    throw new errors.ValidationError(`Не найдено или не валидно поле phone`, 'phone');
   }
   const sms = await SmsSend.findOneByPhone(body.phone);
   const user = await Users.findByPhone(body.phone);
@@ -151,11 +152,11 @@ smsc.configure({
  */
  const update = async (ctx) => {
   const body = ctx.request.body;
-  if(!body.name || (body.name && body.name.length < 2)){
-    throw new errors.ValidationError(`Не найдено или не валидно поле name`);
+  if(!_.has(body, 'name') || (body.name && body.name.length < 2)){
+    throw new errors.ValidationError(`Не найдено или не валидно поле name`, 'name');
   }
-  if(!body.email || (body.email && !utils.validateEmail(body.email))){
-    throw new errors.ValidationError(`Не найдено или не валидно поле email`);
+  if(!_.has(body, 'email') || (body.email && !utils.validateEmail(body.email))){
+    throw new errors.ValidationError(`Не найдено или не валидно поле email`, 'email');
   }
   const user = await Users.findByPhone(ctx.state.user.phone);
   if(user){
@@ -175,7 +176,16 @@ smsc.configure({
  * @apiSuccess (200) {String} status Успешная регистрация
  */
  const deleteUser = async (ctx) => {
-  const user = await Users.findByPhone(ctx.state.user.phone);
+  let user = false;
+  if(ctx.state.user && ctx.state.user.role == constants.roles.admin){
+    const body = ctx.request.body;
+    if(!_.has(body, 'id')){
+      throw new errors.ValidationError(`Не найдено поле id`, 'id');
+    }
+    user = await Users.findById(body.id);
+  }else if(ctx.state.user && ctx.state.user.role == constants.roles.user){
+    user = await Users.findByPhone(ctx.state.user.phone);
+  }
   if(user){
     await Users.destroy({ where: { id: user.id } });
     ctx.body = { status: 'success' };
@@ -196,6 +206,64 @@ smsc.configure({
   }
 };
 
+/**
+ * @api {get} /user/all Получение всех пользователей
+ * @apiBody {String} after Курсор после которого нужно получить пользователей
+ * @apiBody {String} before Курсор до которого нужно получить пользователей
+ * @apiGroup User
+ */
+ const getAll = async (ctx) => {
+  if(ctx.state.user && ctx.state.user.role == constants.roles.admin){
+    ctx.body = await Users.paginate({
+      limit: 10,
+      after: ctx.query.after,
+      before: ctx.query.before,
+    });
+  }else{
+    throw new errors.NotFoundError(`Пользователи не найдены`);
+  }
+};
+
+/**
+ * @api {put} /user/role Установка роли пользователя
+ * @apiBody {Number} role Устанавливаемая роль пользователя. Допустимые значения: 1 - Пользователь / 2 - Админ
+ * @apiGroup User
+ */
+ const roleSet = async (ctx) => {
+  if(ctx.state.user && ctx.state.user.role == constants.roles.admin){
+    const body = ctx.request.body;
+    if(!_.has(body, 'id')){
+      throw new errors.ValidationError(`Не найдено поле id`, 'id');
+    }
+    if(!_.has(body, 'role') || (body.role && !Object.values(constants.roles).includes(body.role))){
+      throw new errors.ValidationError(`Не найдено или не валидно поле role`, 'role');
+    }
+    const user = await Users.findById(body.id);
+    if(user){
+      Users.update(
+        { role: body.role },
+        { where: { id: user.id } }
+      )
+      ctx.body = { status: 'success' };
+    }else{
+      throw new errors.ForbiddenError(`Пользователь не найден`);
+    }
+  }else{
+    throw new errors.NotFoundError(`Метод недоступен!`);
+  }
+};
+
+/**
+ * @api {get} /user/role Доступные роли пользователей
+ */
+ const roleGet = async (ctx) => {
+  if(ctx.state.user && ctx.state.user.role == constants.roles.admin){
+    ctx.body = constants.roles;
+  }else{
+    throw new errors.NotFoundError(`Метод недоступен!`);
+  }
+};
+
 module.exports = {
   auth,
   info,
@@ -203,4 +271,7 @@ module.exports = {
   smsVerify,
   update,
   deleteUser,
+  getAll,
+  roleSet,
+  roleGet,
 }

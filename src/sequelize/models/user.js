@@ -1,4 +1,5 @@
 const tableName = 'users';
+const { makePaginate } = require('sequelize-cursor-pagination');
 
 /**
  * Возвращает модель пользователя
@@ -80,6 +81,8 @@ const model = (sequelize, DataTypes) => {
 
     return User.findOne(options);
   };
+
+  User.paginate = makePaginate(User);
 
   return User;
 };

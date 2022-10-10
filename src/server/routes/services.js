@@ -9,11 +9,11 @@ const router = new Router();
 router
     .post('/add', services.add)
     .post('/edit', services.edit)
-    .delete('/remove', services.remove)
+    .del('/remove', services.remove)
     .post('/upload', services.upload)
     .post('/plan/add', services.planAdd)
     .post('/plan/edit', services.planEdit)
-    .delete('/plan/remove', services.planRemove)
+    .del('/plan/remove', services.planRemove)
     .get('/', services.getAll)
     .get('/:id', services.getOne)
 ;
