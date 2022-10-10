@@ -255,6 +255,7 @@ smsc.configure({
 
 /**
  * @api {get} /user/role Доступные роли пользователей
+ * @apiGroup User
  */
  const roleGet = async (ctx) => {
   if(ctx.state.user && ctx.state.user.role == constants.roles.admin){
