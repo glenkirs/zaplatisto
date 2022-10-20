@@ -11,7 +11,8 @@ const Rbac = require('./middlewares/rbac');
 const jwt = require('jsonwebtoken');
 const { logRequestResponse, resolveAuthorizationHeader } = require('./middlewares/logRequestResponse');
 const path = require('path');
-const serve = require('koa-static')
+const serve = require('koa-static');
+const formidable = require('koa2-formidable')
 
 const parseState = (ctx, next) => {
   try {
@@ -36,7 +37,10 @@ const start = () => new Promise((resolve, reject) => {
   app.use(RequestId);
   app.use(parseState);
   app.use(ErrorHandling);
-  app.use(bodyParser());
+  app.use(formidable());
+  app.use(bodyParser({
+    enableTypes: ['json', 'form']
+  }));
   app.use(logRequestResponse);
   app.use(Rbac(rules));
   app.use(router.routes());

@@ -15,12 +15,12 @@
     "apidoc": "^0.53.0",
     "crypto-js": "^4.0.0",
     "fast-safe-stringify": "^2.0.2",
-    "formidable": "^2.0.1",
     "jsonwebtoken": "^8.4.0",
     "koa": "^2.13.1",
     "koa-bodyparser": "^4.3.0",
     "koa-router": "^10.0.0",
     "koa-static": "^5.0.0",
+    "koa2-formidable": "^1.0.3",
     "lodash": "^4.17.20",
     "lodash.get": "^4.4.2",
     "lodash.has": "^4.5.2",
@@ -33,7 +33,8 @@
     "request-promise-native": "^1.0.9",
     "sequelize": "^6.5.0",
     "sequelize-cli": "^6.2.0",
-    "sequelize-cursor-pagination": "^3.2.0",
-    "uuid": "^8.3.2"
+    "sequelize-cursor-pagination": "^3.3.0",
+    "uuid": "^8.3.2",
+    "sharp": "^0.31.1"
   }
 }

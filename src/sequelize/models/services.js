@@ -26,9 +26,15 @@ const model = (sequelize, DataTypes) => {
       defaultValue: null,
       allowNull: true,
     },
-    label: {
-      type: DataTypes.STRING,
-      allowNull: true,
+    is_active: {
+      type: DataTypes.INTEGER,
+      defaultValue: 0,
+      allowNull: false,
+    },
+    template: {
+      type: DataTypes.INTEGER,
+      defaultValue: 1,
+      allowNull: false,
     },
     createdAt: {
       type: DataTypes.DATE,

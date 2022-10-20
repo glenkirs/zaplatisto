@@ -16,27 +16,40 @@ const excludeRoles = (roles, toExclude) => {
 const rules = [
   //Static
   { path: '^/doc', roles: ['*'], methods: ['GET'], action: actions.allow },
-  { path: '^/test', roles: ['*'], methods: ['GET'], action: actions.allow },
 
   //Users
+  { path: '^/user', roles: [r.user, r.admin], methods: ['GET'], action: actions.allow },
+  { path: '^/user/list', roles: [r.admin], methods: ['GET'], action: actions.allow },
   { path: '^/user/auth', roles: ['*'], methods: ['POST'], action: actions.allow },
   { path: '^/user/sms', roles: ['*'], methods: ['POST'], action: actions.allow },
-  { path: '^/user/info', roles: [r.user, r.admin], methods: ['GET'], action: actions.allow },
-  { path: '^/user/update', roles: [r.user, r.admin], methods: ['PUT'], action: actions.allow },
-  { path: '^/user/delete', roles: [r.user, r.admin], methods: ['DELETE'], action: actions.allow },
-  { path: '^/user/all', roles: [r.admin], methods: ['GET'], action: actions.allow },
-  { path: '^/user/role', roles: [r.admin], methods: ['GET', 'PUT'], action: actions.allow },
+  { path: `^/user/${intId}`, roles: [r.user, r.admin], methods: ['GET', 'PUT', 'DELETE'], action: actions.allow },
 
-  //Services
-  { path: '^/services', roles: ['*'], methods: ['GET'], action: actions.allow },
-  { path: `^/services/${intId}`, roles: ['*'], methods: ['GET'], action: actions.allow },
-  { path: '^/services/add', roles: [r.admin], methods: ['POST'], action: actions.allow },
-  { path: '^/services/edit', roles: [r.admin], methods: ['POST'], action: actions.allow },
-  { path: '^/services/remove', roles: [r.admin], methods: ['DELETE'], action: actions.allow },
-  { path: '^/services/upload', roles: [r.admin], methods: ['POST'], action: actions.allow },
-  { path: '^/services/plan/add', roles: [r.admin], methods: ['POST'], action: actions.allow },
-  { path: '^/services/plan/edit', roles: [r.admin], methods: ['POST'], action: actions.allow },
-  { path: '^/services/plan/remove', roles: [r.admin], methods: ['DELETE'], action: actions.allow },
+  //Service
+  { path: '^/service', roles: [r.admin], methods: ['POST', 'PUT', 'DELETE'], action: actions.allow },
+  { path: '^/service', roles: ['*'], methods: ['GET'], action: actions.allow },
+  { path: `^/service/${intId}`, roles: ['*'], methods: ['GET'], action: actions.allow },
+
+  //Product
+  { path: '^/product', roles: [r.admin], methods: ['POST', 'PUT', 'DELETE'], action: actions.allow },
+  { path: '^/product', roles: ['*'], methods: ['GET'], action: actions.allow },
+  { path: `^/product/${intId}`, roles: ['*'], methods: ['GET'], action: actions.allow },
+
+  //Plan
+  { path: '^/plan', roles: [r.admin], methods: ['POST', 'PUT', 'DELETE'], action: actions.allow },
+  { path: '^/plan', roles: ['*'], methods: ['GET'], action: actions.allow },
+  { path: `^/plan/${intId}`, roles: ['*'], methods: ['GET'], action: actions.allow },
+
+  //Currency
+  { path: '^/currency', roles: ['*'], methods: ['GET'], action: actions.allow },
+
+  //Billing
+  { path: '^/billing', roles: ['*'], methods: ['GET'], action: actions.allow },
+
+  //Template
+  { path: '^/template', roles: ['*'], methods: ['GET'], action: actions.allow },
+
+  //Role
+  { path: '^/role', roles: [r.admin], methods: ['GET'], action: actions.allow },
 ];
 
 rules.forEach(rule => (rule.path = new RegExp(rule.path)));

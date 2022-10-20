@@ -1,18 +1,17 @@
-const tableName = 'plans';
-const { _ } = require('lodash');
+const tableName = 'products';
 
 /**
- * Возвращает модель тарифа
+ * Возвращает модель продукта
  * @param {Sequelize} sequelize
  * @param {Object} DataTypes
  * @returns {Model|*|{}|void}
  */
 const model = (sequelize, DataTypes) => {
   /**
-   * Модель тарифа
+   * Модель продукта
    * @type {Object}
    */
-  const Plan = sequelize.define(tableName, {
+  const Products = sequelize.define(tableName, {
     id: {
       primaryKey: true,
       autoIncrement: true,
@@ -23,30 +22,20 @@ const model = (sequelize, DataTypes) => {
       defaultValue: null,
       allowNull: true,
     },
-    descriptions: {
-      type: DataTypes.JSON,
-      defaultValue: [],
-      get: function () {
-        return JSON.parse(this.getDataValue('descriptions'));
-      },
+    logo32: {
+      type: DataTypes.STRING,
+      defaultValue: null,
+      allowNull: true,
     },
-    prices: {
-      type: DataTypes.JSON,
-      defaultValue: [],
-      allowNull: false,
-      get: function () {
-        return JSON.parse(this.getDataValue('prices'));
-      },
+    logo24: {
+      type: DataTypes.STRING,
+      defaultValue: null,
+      allowNull: true,
     },
     service: {
       type: DataTypes.INTEGER,
       allowNull: false,
       default: 0,
-    },
-    product: {
-      type: DataTypes.INTEGER,
-      allowNull: true,
-      default: null,
     },
     is_active: {
       type: DataTypes.INTEGER,
@@ -65,34 +54,43 @@ const model = (sequelize, DataTypes) => {
     timestamps: true,
   });
 
-  Plan.associate = (models) => {
-    Plan.belongsTo(models.services, {
+  Products.associate = (models) => {
+    Products.belongsTo(models.services, {
       as: 'services',
       foreignKey: 'service',
       targetKey: 'id',
     });
   };
 
-  Plan.getAllFront = () => {
-    return Plan.findAll();
-  }
-
-  Plan.getOneFront = id => {
-    const where = { id };
-    const options = { where };
-    return Plan.findOne(options);
-  }
-
-  Plan.findById = id => {
+  Products.findById = id => {
     const where = { id };
     const options = {
       where,
     };
 
-    return Plan.findOne(options);
+    return Products.findOne(options);
   };
 
-  return Plan;
+  Products.getAllFront = () => {
+    return Products.findAll();
+  }
+
+  Products.getOneFront = id => {
+    const where = { id };
+    const options = { where };
+    return Products.findOne(options);
+  }
+  
+  Products.findByService = serviceId => {
+    const where = { service: serviceId };
+    const options = {
+      where,
+    };
+
+    return Products.findOne(options);
+  };
+
+  return Products;
 };
 
 module.exports = model;

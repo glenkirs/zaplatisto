@@ -1,7 +1,6 @@
 const tableName = 'sms_send';
 
 const up = async (queryInterface, Sequelize) => {
-  console.log(tableName);
   await queryInterface.addColumn(tableName, 'verify', Sequelize.INTEGER);
 };
 

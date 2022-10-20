@@ -1,5 +1,10 @@
 const moment = require('moment');
+const sharp = require('sharp');
 const logger = require('../helpers/logger').getLogger();
+const path = require('path');
+const fs = require('fs');
+const errors = require('./errors');
+
 /**
 * Валидация телефона
 * @param {String} phone
@@ -39,9 +44,53 @@ const checkMinutes = (date) => {
     return (dur.asMinutes() * -1).toFixed(2);
 }
 
+/**
+* Сохранение загруженного файла
+* @return {String} Путь до загруженного файла
+*/
+const uploadFile = async (file, size = { width: 80, height: 18 }) => {
+    sharp.cache(false);
+    return new Promise(async (resolve, reject) => {
+        if(file){
+            const image = sharp(file.path);
+            const metadata = await image.metadata();
+            const name = `${path.parse(file.name).name}_${size.width}x${size.height}.${metadata.format}`;
+            const newpath = `${path.resolve(__dirname, '../../static')}/${name}`;
+            
+            await image.resize({ fit:  "cover", canvas: 'min', height: size.height, width: size.width })
+            .toFile(newpath);
+
+            resolve(`/static/${file.name}`);
+        }else{
+            reject();
+        }
+    });
+}
+
+/**
+* Сохранение загруженного файла
+* @return {String} Путь до загруженного файла
+*/
+const deleteFile = async (path) => {
+    return new Promise(function(resolve, reject) {
+        if (fs.existsSync(path)) {
+            fs.unlink(path, (err) => {
+                if (err) {
+                    throw new errors.ForbiddenError(err);
+                }
+                resolve();
+            })
+        }else{
+            throw new errors.NotFoundError(`Файл не найден`);
+        }
+    });
+}
+
 module.exports = {
     validatePhone,
     generateSmsCode,
     validateEmail,
     checkMinutes,
+    uploadFile,
+    deleteFile,
 };

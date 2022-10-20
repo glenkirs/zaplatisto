@@ -1,14 +1,14 @@
 const tableName = 'users';
 
 const up = async (queryInterface, Sequelize) => {
-  await queryInterface.changeColumn(tableName, 'name', { allowNull: true, defaultValue: null });
+  await queryInterface.changeColumn(tableName, 'name', { type: Sequelize.STRING, allowNull: true, defaultValue: null });
 };
 
 const down = async (queryInterface, Sequelize) => {
-  await queryInterface.changeColumn(tableName, 'name', { allowNull: false });
+  await queryInterface.changeColumn(tableName, 'name', { type: Sequelize.STRING, allowNull: false });
 };
 
-export {
+module.exports = {
   up,
   down,
 };
