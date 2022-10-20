@@ -143,7 +143,7 @@ smsc.configure({
 };
 
 /**
- * @api {put} /user Обновление пользователя
+ * @api {put} /user/:id Обновление пользователя
  * @apiGroup User
  * @apiBody {String} name Имя
  * @apiBody {String} email E-mail
@@ -152,21 +152,18 @@ smsc.configure({
  */
  const update = async (ctx) => {
   const body = ctx.request.body;
-  let checkRole = false, user = false;
+  let user = false;
   if(_.has(ctx.state, 'user') && ctx.state.user.role == constants.roles.admin && ctx.state.user.id !== ctx.params.id){
     user = await Users.findById(ctx.params.id);
-    if(_.has(body, 'role')){
-      checkRole = true;
-      if(body.role && !Object.values(constants.roles).includes(body.role)){
+    if(_.has(body, 'role') && !Object.values(constants.roles).includes(body.role)){
         throw new errors.ValidationError(`Не валидно поле role`, 'role');
-      }
     }
   }
-  if(!checkRole && (!_.has(body, 'name') || (body.name && body.name.length < 2))){
-    throw new errors.ValidationError(`Не найдено или не валидно поле name`, 'name');
+  if(_.has(body, 'name') && body.name.length < 2){
+    throw new errors.ValidationError(`Не валидно поле name`, 'name');
   }
-  if(!checkRole && (!_.has(body, 'email') || (body.email && !utils.validateEmail(body.email)))){
-    throw new errors.ValidationError(`Не найдено или не валидно поле email`, 'email');
+  if(_.has(body, 'email') && !utils.validateEmail(body.email)){
+    throw new errors.ValidationError(`Не валидно поле email`, 'email');
   }
   if(!user){
     user = await Users.findByPhone(ctx.state.user.phone);

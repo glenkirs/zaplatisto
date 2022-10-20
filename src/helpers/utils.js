@@ -60,7 +60,7 @@ const uploadFile = async (file, size = { width: 80, height: 18 }) => {
             await image.resize({ fit:  "cover", canvas: 'min', height: size.height, width: size.width })
             .toFile(newpath);
 
-            resolve(`/static/${newpath}`);
+            resolve(`/static/${name}`);
         }else{
             reject();
         }

@@ -35,12 +35,11 @@ const add = async (ctx) => {
     }
     const pathImg = await Utils.uploadFile(files.img, { width: 100, height: 35 });
 
-    throw new errors.NotFoundError(`Сервис не найден`);
     const service = await Services.create({
         name: body.name,
         img: pathImg,
         template: body.template ?? 0,
-        is_active: body.is_active ?? null,
+        is_active: body.is_active || false,
     });
     ctx.body = {
         status: 'success',
@@ -131,7 +130,6 @@ const remove = async (ctx) => {
 /**
  * @api {get} /service Получение сервисов
  * @apiGroup Services
- * @apiBody {String} [phone] Телефон в формате 79992223344
  */
 const getAll = async (ctx) => {
     ctx.body = await Services.getAllFront();
@@ -140,7 +138,6 @@ const getAll = async (ctx) => {
 /**
  * @api {get} /service/:id Получение сервиса
  * @apiGroup Services
- * @apiBody {String} [phone] Телефон в формате 79992223344
  */
 const getOne = async (ctx) => {
     const service = await Services.getOneFront(ctx.params.id);

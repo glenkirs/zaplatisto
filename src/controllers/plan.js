@@ -3,7 +3,6 @@ const models = require('../sequelize/models');
 const constants = require('../helpers/constants');
 const logger = require('../helpers/logger').getLogger();
 const { _ } = require('lodash');
-const Utils = require('../helpers/utils');
 
 const Services = models.services;
 const Plans = models.plans;
@@ -32,15 +31,15 @@ const add = async (ctx) => {
         throw new errors.ValidationError(`Не найдено или не валидно поле prices`, 'prices');
     }
     if(_.has(body, 'prices') && _.isArray(body.prices)){
-        body.prices.forEach((el) => {
+        body.prices.forEach((el, i) => {
             if(!_.has(el, 'price') || !_.has(el, 'currency') || !_.has(el, 'billing')){
-                throw new errors.ValidationError(`Не валидно поле prices`, 'prices');
+                throw new errors.ValidationError(`Не валидно поле prices`, `prices[${i}]`);
             }
             if(_.has(el, 'currency') && !Object.keys(constants.currency).includes(el.currency+'')){
-                throw new errors.ValidationError(`Не валидно поле prices[].currency`, 'currency');
+                throw new errors.ValidationError(`Не валидно поле prices[].currency`, `prices[${i}].currency`);
             }
             if(_.has(el, 'billing') && !Object.keys(constants.billing).includes(el.billing+'')){
-                throw new errors.ValidationError(`Не валидно поле prices[].billing`, 'billing');
+                throw new errors.ValidationError(`Не валидно поле prices[].billing`, `prices[${i}].billing`);
             }
         })
     }
@@ -98,15 +97,15 @@ const edit = async (ctx) => {
         throw new errors.ValidationError(`Не найдено или не валидно поле prices`, 'prices');
     }
     if(_.has(body, 'prices') && _.isArray(body.prices)){
-        body.prices.forEach((el) => {
+        body.prices.forEach((el, i) => {
             if(!_.has(el, 'price') || !_.has(el, 'currency') || !_.has(el, 'billing')){
-                throw new errors.ValidationError(`Не валидно поле prices`, 'prices');
+                throw new errors.ValidationError(`Не валидно поле prices`, `prices[${i}]`);
             }
             if(_.has(el, 'currency') && !Object.keys(constants.currency).includes(el.currency+'')){
-                throw new errors.ValidationError(`Не валидно поле prices[].currency`, 'currency');
+                throw new errors.ValidationError(`Не валидно поле prices[].currency`, `prices[${i}].currency`);
             }
             if(_.has(el, 'billing') && !Object.keys(constants.billing).includes(el.billing+'')){
-                throw new errors.ValidationError(`Не валидно поле prices[].billing`, 'billing');
+                throw new errors.ValidationError(`Не валидно поле prices[].billing`, `prices[${i}].billing`);
             }
         })
     }

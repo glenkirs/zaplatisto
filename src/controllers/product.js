@@ -91,12 +91,12 @@ const edit = async (ctx) => {
     }
 
     let pathImg32 = product.logo32;
-    let pathImg24 = product.logo32;
+    let pathImg24 = product.logo24;
     if(_.has(files, 'logo32')){
         pathImg32 = await Utils.uploadFile(files.logo32);
     }
-    if(_.has(files, 'pathImg24')){
-        pathImg24 = await Utils.uploadFile(files.pathImg24);
+    if(_.has(files, 'logo24')){
+        pathImg24 = await Utils.uploadFile(files.logo24);
     }
 
     await Products.update(
