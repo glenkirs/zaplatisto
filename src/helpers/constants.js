@@ -23,7 +23,6 @@ const currency = {
 const billing = {
     0: 'Ежемесячный',
     1: 'Год',
-    2: 'За пользователей',
 };
 
 module.exports = {

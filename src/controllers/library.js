@@ -1,12 +1,18 @@
 const constants = require('../helpers/constants');
 const errors = require('../helpers/errors');
+const logger = require('../helpers/logger').getLogger();
 
 /**
  * @api {get} /currency Получение валют
  * @apiGroup Library
  */
 const getCurrency = async (ctx) => {
-  ctx.body = constants.currency;
+  ctx.body = Object.values(constants.currency).map((item, i) => {
+    return {
+      id: i,
+      name: item
+    }
+  })
 };
 
 /**
@@ -14,7 +20,12 @@ const getCurrency = async (ctx) => {
  * @apiGroup Library
  */
  const getBilling = async (ctx) => {
-  ctx.body = constants.billing;
+  ctx.body = Object.values(constants.billing).map((item, i) => {
+    return {
+      id: i,
+      name: item
+    }
+  })
 };
 
 /**
@@ -22,7 +33,12 @@ const getCurrency = async (ctx) => {
  * @apiGroup Library
  */
  const getTemplate = async (ctx) => {
-  ctx.body = constants.template;
+  ctx.body = Object.values(constants.template).map((item, i) => {
+    return {
+      id: i,
+      name: item
+    }
+  })
 };
 
 /**
@@ -31,7 +47,12 @@ const getCurrency = async (ctx) => {
  */
  const getRole = async (ctx) => {
   if(ctx.state.user && ctx.state.user.role == constants.roles.admin){
-    ctx.body = constants.roles;
+    ctx.body = Object.keys(constants.roles).map((item, i) => {
+      return {
+        id: i,
+        name: item
+      }
+    })
   }else{
     throw new errors.NotFoundError(`Метод недоступен!`);
   }

@@ -16,6 +16,7 @@ const Products = models.products;
  * @apiBody {Json} [prices] Цены тарифного плана в формате - [{price:1000, currency:0, billing:1}, {price:1300, currency:1, billing:0}]
  * @apiBody {Number} [service] ID сервиса
  * @apiBody {Boolean} [is_active] Активность тарифа
+ * @apiBody {Boolean} [is_members] Возможна оплата за пользователей
  * @apiSuccess (200) {String} status Успешное добавление
  * @apiSuccess (200) {String} id ID добавленного тарифа
  */
@@ -46,6 +47,9 @@ const add = async (ctx) => {
     if(!_.has(body, 'service')){
         throw new errors.ValidationError(`Не найдено поле service`, 'service');
     }
+    if(!_.has(body, 'is_members')){
+        throw new errors.ValidationError(`Не найдено поле is_members`, 'is_members');
+    }
     if(!_.has(body, 'is_active')){
         throw new errors.ValidationError(`Не найдено поле is_active`, 'is_active');
     }
@@ -66,7 +70,8 @@ const add = async (ctx) => {
         prices: body.prices,
         service: service.id,
         product: body.product ?? null,
-        is_active: body.is_active ?? null,
+        is_members: body.is_members ?? false,
+        is_active: body.is_active ?? false,
     });
     ctx.body = {
         status: 'success',
@@ -83,6 +88,7 @@ const add = async (ctx) => {
  * @apiBody {Number} [service] ID сервиса
  * @apiBody {Number} [plan] ID тарифа
  * @apiBody {Boolean} [is_active] Активность тарифа
+ * @apiBody {Boolean} [is_members] Возможна оплата за пользователей
  * @apiSuccess (200) {String} status Успешное редактирование
  */
 const edit = async (ctx) => {
@@ -115,6 +121,9 @@ const edit = async (ctx) => {
     if(!_.has(ctx.params, 'id')){
         throw new errors.ValidationError(`Не найдено поле ID`, 'id');
     }
+    if(!_.has(body, 'is_members')){
+        throw new errors.ValidationError(`Не найдено поле is_members`, 'is_members');
+    }
     if(!_.has(body, 'is_active')){
         throw new errors.ValidationError(`Не найдено поле is_active`, 'is_active');
     }
@@ -142,6 +151,7 @@ const edit = async (ctx) => {
             service: service.id,
             product: body.product ?? null,
             is_active: body.is_active ?? null,
+            is_members: body.is_members ?? false,
         },
         { where: { id: plan.id } }
     )

@@ -5,6 +5,7 @@ const service = require('../../controllers/service');
 const product = require('../../controllers/product');
 const plan = require('../../controllers/plan');
 const library = require('../../controllers/library');
+const order = require('../../controllers/order');
 
 const router = new Router();
 
@@ -51,6 +52,13 @@ router
 
   //Role
   .get('/role', library.getRole)
+
+  //Plan
+  .get('/order', order.getAll)
+  .post('/order', order.add)
+  .get('/order/:id', order.getOne)
+  .put('/order/:id', order.edit)
+  .del('/order/:id', order.remove)
 ;
 
 module.exports = router;

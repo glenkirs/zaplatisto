@@ -48,6 +48,10 @@ const model = (sequelize, DataTypes) => {
       allowNull: true,
       default: null,
     },
+    is_members: {
+      type: DataTypes.INTEGER,
+      allowNull: true,
+    },
     is_active: {
       type: DataTypes.INTEGER,
       allowNull: true,
