@@ -18,7 +18,7 @@ const model = (sequelize, DataTypes) => {
       autoIncrement: true,
       type: DataTypes.INTEGER.UNSIGNED,
     },
-    title: {
+    name: {
       type: DataTypes.STRING,
       defaultValue: null,
       allowNull: true,
@@ -39,14 +39,16 @@ const model = (sequelize, DataTypes) => {
       },
     },
     service: {
-      type: DataTypes.INTEGER,
+      type: DataTypes.INTEGER.UNSIGNED,
       allowNull: false,
       default: 0,
+      primaryKey: true
     },
     product: {
-      type: DataTypes.INTEGER,
+      type: DataTypes.INTEGER.UNSIGNED,
       allowNull: true,
       default: null,
+      primaryKey: true
     },
     is_members: {
       type: DataTypes.INTEGER,
@@ -73,6 +75,11 @@ const model = (sequelize, DataTypes) => {
     Plan.belongsTo(models.services, {
       as: 'services',
       foreignKey: 'service',
+      targetKey: 'id',
+    });
+    Plan.belongsTo(models.products, {
+      as: 'products',
+      foreignKey: 'product',
       targetKey: 'id',
     });
   };

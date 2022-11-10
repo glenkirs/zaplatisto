@@ -9,5 +9,6 @@ COPY package.json /app
 RUN npm i
 
 COPY . /app
+RUN mkdir -p /app/static
 
 CMD ["bash", "start.sh"]

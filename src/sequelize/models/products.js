@@ -17,7 +17,7 @@ const model = (sequelize, DataTypes) => {
       autoIncrement: true,
       type: DataTypes.INTEGER.UNSIGNED,
     },
-    title: {
+    name: {
       type: DataTypes.STRING,
       defaultValue: null,
       allowNull: true,
@@ -33,9 +33,10 @@ const model = (sequelize, DataTypes) => {
       allowNull: true,
     },
     service: {
-      type: DataTypes.INTEGER,
+      type: DataTypes.INTEGER.UNSIGNED,
       allowNull: false,
       default: 0,
+      primaryKey: true
     },
     is_active: {
       type: DataTypes.INTEGER,
@@ -55,6 +56,11 @@ const model = (sequelize, DataTypes) => {
   });
 
   Products.associate = (models) => {
+    Products.Plans = Products.hasMany(models.plans, {
+      as: 'plans',
+      foreignKey: 'product',
+      sourceKey: 'id',
+    });
     Products.belongsTo(models.services, {
       as: 'services',
       foreignKey: 'service',
@@ -72,12 +78,15 @@ const model = (sequelize, DataTypes) => {
   };
 
   Products.getAllFront = () => {
-    return Products.findAll();
+    return Products.findAll({ include: 'plans' });
   }
 
   Products.getOneFront = id => {
     const where = { id };
-    const options = { where };
+    const options = {
+      where,
+      include: 'plans'
+    };
     return Products.findOne(options);
   }
   
@@ -85,6 +94,7 @@ const model = (sequelize, DataTypes) => {
     const where = { service: serviceId };
     const options = {
       where,
+      include: 'plans'
     };
 
     return Products.findOne(options);

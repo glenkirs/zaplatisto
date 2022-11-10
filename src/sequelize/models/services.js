@@ -60,6 +60,11 @@ const model = (sequelize, DataTypes) => {
       foreignKey: 'service',
       sourceKey: 'id',
     });
+    Services.Products = Services.hasMany(models.products, {
+      as: 'products',
+      foreignKey: 'service',
+      sourceKey: 'id',
+    });
   };
 
   Services.findById = id => {
@@ -81,14 +86,14 @@ const model = (sequelize, DataTypes) => {
   };
 
   Services.getAllFront = () => {
-    return Services.findAll({ include: 'plans' });
+    return Services.findAll({ include: ['plans', 'products'] });
   }
 
   Services.getOneFront = id => {
     const where = { id };
     const options = {
       where,
-      include: 'plans'
+      include: ['plans', 'products']
     };
     return Services.findOne(options);
   }

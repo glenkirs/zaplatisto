@@ -4,6 +4,7 @@ const logger = require('../helpers/logger').getLogger();
 const path = require('path');
 const fs = require('fs');
 const errors = require('./errors');
+const { v4: uuidv4 } = require('uuid');
 
 /**
 * Валидация телефона
@@ -54,7 +55,7 @@ const uploadFile = async (file, size = { width: 80, height: 18 }) => {
         if(file){
             const image = sharp(file.path);
             const metadata = await image.metadata();
-            const name = `${path.parse(file.name).name}_${size.width}x${size.height}.${metadata.format}`;
+            const name = `${uuidv4()}_${size.width}x${size.height}.${metadata.format}`;
             const newpath = `${path.resolve(__dirname, '../../static')}/${name}`;
             
             await image.resize({ fit:  "cover", canvas: 'min', height: size.height, width: size.width })
@@ -80,8 +81,6 @@ const deleteFile = async (path) => {
                 }
                 resolve();
             })
-        }else{
-            throw new errors.NotFoundError(`Файл не найден`);
         }
     });
 }
