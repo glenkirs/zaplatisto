@@ -97,7 +97,7 @@ const model = (sequelize, DataTypes) => {
       include: 'plans'
     };
 
-    return Products.findOne(options);
+    return Products.findAll(options);
   };
 
   return Products;

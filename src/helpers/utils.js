@@ -81,6 +81,8 @@ const deleteFile = async (path) => {
                 }
                 resolve();
             })
+        }else{
+            resolve();
         }
     });
 }

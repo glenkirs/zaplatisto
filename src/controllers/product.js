@@ -12,7 +12,7 @@ const Products = models.products;
 /**
  * @api {post} /product Добавление продукта
  * @apiGroup Products
- * @apiBody {String} [title] Название продукта
+ * @apiBody {String} [name] Название продукта
  * @apiBody {File} [logo32] Лого в формате 32х32
  * @apiBody {File} [logo24] Лого в формате 24х24
  * @apiBody {Number} [service] ID сервиса
@@ -22,8 +22,8 @@ const Products = models.products;
  */
 const add = async (ctx) => {
     const { body, files } = ctx.request;
-    if(!_.has(body, 'title') || (_.has(body, 'title') && body.title.length < 4)){
-        throw new errors.ValidationError(`Не найдено или не валидно поле title`, 'title');
+    if(!_.has(body, 'name') || (_.has(body, 'name') && body.name.length < 4)){
+        throw new errors.ValidationError(`Не найдено или не валидно поле name`, 'name');
     }
     if(!_.has(files, 'logo32')){
         throw new errors.ValidationError(`Не найден файл logo32`, 'logo32');
@@ -46,7 +46,7 @@ const add = async (ctx) => {
     const pathImg24 = await Utils.uploadFile(files.logo24, { width: 24, height: 24 });
 
     const product = await Products.create({
-        title: body.title,
+        name: body.name,
         logo32: pathImg32,
         logo24: pathImg24,
         service: service.id,
@@ -62,7 +62,7 @@ const add = async (ctx) => {
  * @api {put} /product/:id Редактирование продукта
  * @apiGroup Products
  * @apiBody {Number} [id] ID продукта
- * @apiBody {String} [title] Название продукта
+ * @apiBody {String} [name] Название продукта
  * @apiBody {File} [logo32] Лого в формате 32х32
  * @apiBody {File} [logo24] Лого в формате 24х24
  * @apiBody {Number} [service] ID сервиса
@@ -71,8 +71,8 @@ const add = async (ctx) => {
  */
 const edit = async (ctx) => {
     const { body, files } = ctx.request;
-    if(!_.has(body, 'title') || (_.has(body, 'title') && body.title.length < 4)){
-        throw new errors.ValidationError(`Не найдено или не валидно поле title`, 'title');
+    if(!_.has(body, 'name') || (_.has(body, 'name') && body.name.length < 4)){
+        throw new errors.ValidationError(`Не найдено или не валидно поле name`, 'name');
     }
     if(!_.has(body, 'service')){
         throw new errors.ValidationError(`Не найдено поле service`, 'service');
@@ -101,7 +101,7 @@ const edit = async (ctx) => {
 
     await Products.update(
         {
-            title: body.title,
+            name: body.name,
             logo32: pathImg32,
             logo24: pathImg24,
             service: service.id,

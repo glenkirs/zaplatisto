@@ -11,7 +11,7 @@ const Products = models.products;
 /**
  * @api {post} /plan Добавление тарифа
  * @apiGroup Plans
- * @apiBody {String} [title] Название тарифа
+ * @apiBody {String} [name] Название тарифа
  * @apiBody {Json} [descriptions] Описания тарифа в формате - ["Title", "Title1", "Title2"]
  * @apiBody {Json} [prices] Цены тарифного плана в формате - [{price:1000, currency:0, billing:1}, {price:1300, currency:1, billing:0}]
  * @apiBody {Number} [service] ID сервиса
@@ -22,8 +22,8 @@ const Products = models.products;
  */
 const add = async (ctx) => {
     const body = ctx.request.body;
-    if(!_.has(body, 'title') || (_.has(body, 'title') && body.title.length < 4)){
-        throw new errors.ValidationError(`Не найдено или не валидно поле title`, 'title');
+    if(!_.has(body, 'name') || (_.has(body, 'name') && body.name.length < 4)){
+        throw new errors.ValidationError(`Не найдено или не валидно поле name`, 'name');
     }
     if(!_.has(body, 'descriptions') || (_.has(body, 'descriptions') && !_.isArray(body.descriptions))){
         throw new errors.ValidationError(`Не найдено или не валидно поле descriptions`, 'descriptions');
@@ -65,7 +65,7 @@ const add = async (ctx) => {
     }
 
     const plan = await Plans.create({
-        title: body.title,
+        name: body.name,
         descriptions: body.descriptions,
         prices: body.prices,
         service: service.id,
@@ -82,7 +82,7 @@ const add = async (ctx) => {
 /**
  * @api {put} /plan/:id Редактирование тарифа
  * @apiGroup Plans
- * @apiBody {String} [title] Название тарифа
+ * @apiBody {String} [name] Название тарифа
  * @apiBody {Json} [descriptions] Описания тарифа в формате - ["Title", "Title1", "Title2"]
  * @apiBody {Json} [prices] Цены тарифного плана в формате - [{price:1000, currency:0, billing:1}, {price:1300, currency:1, billing:0}]
  * @apiBody {Number} [service] ID сервиса
@@ -93,8 +93,8 @@ const add = async (ctx) => {
  */
 const edit = async (ctx) => {
     const body = ctx.request.body;
-    if(!_.has(body, 'title') || (_.has(body, 'title') && body.title.length < 4)){
-        throw new errors.ValidationError(`Не найдено или не валидно поле title`, 'title');
+    if(!_.has(body, 'name') || (_.has(body, 'name') && body.name.length < 4)){
+        throw new errors.ValidationError(`Не найдено или не валидно поле name`, 'name');
     }
     if(!_.has(body, 'descriptions') || (_.has(body, 'descriptions') && !_.isArray(body.descriptions))){
         throw new errors.ValidationError(`Не найдено или не валидно поле descriptions`, 'descriptions');
@@ -145,7 +145,7 @@ const edit = async (ctx) => {
 
     await Plans.update(
         {
-            title: body.title,
+            name: body.name,
             descriptions: body.descriptions,
             prices: body.prices,
             service: service.id,

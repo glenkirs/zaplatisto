@@ -1,3 +1,5 @@
+const { getLogger } = require("log4js");
+
 const tableName = 'services';
 
 /**
@@ -86,7 +88,20 @@ const model = (sequelize, DataTypes) => {
   };
 
   Services.getAllFront = () => {
-    return Services.findAll({ include: ['plans', 'products'] });
+    return Services.findAll({
+      include: [{
+        model: sequelize.models.plans,
+        as: 'plans'
+      },
+      {
+        model: sequelize.models.products,
+        as: 'products',
+        include: [{
+          model: sequelize.models.plans,
+          as: 'plans'
+        }]
+      }]
+    });
   }
 
   Services.getOneFront = id => {
