@@ -108,7 +108,18 @@ const model = (sequelize, DataTypes) => {
     const where = { id };
     const options = {
       where,
-      include: ['plans', 'products']
+      include: [{
+        model: sequelize.models.plans,
+        as: 'plans'
+      },
+      {
+        model: sequelize.models.products,
+        as: 'products',
+        include: [{
+          model: sequelize.models.plans,
+          as: 'plans'
+        }]
+      }]
     };
     return Services.findOne(options);
   }

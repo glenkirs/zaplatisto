@@ -85,7 +85,7 @@ const model = (sequelize, DataTypes) => {
     const where = { id };
     const options = {
       where,
-      include: 'plans'
+      include: 'plans',
     };
     return Products.findOne(options);
   }
