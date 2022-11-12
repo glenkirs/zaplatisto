@@ -12,7 +12,8 @@ const jwt = require('jsonwebtoken');
 const { logRequestResponse, resolveAuthorizationHeader } = require('./middlewares/logRequestResponse');
 const path = require('path');
 const serve = require('koa-static');
-const formidable = require('koa2-formidable')
+const mount = require('koa-mount');
+const formidable = require('koa2-formidable');
 
 const parseState = (ctx, next) => {
   try {
@@ -34,6 +35,7 @@ const start = () => new Promise((resolve, reject) => {
   const app = new Koa();
 
   app.use(serve(path.join(__dirname, '/../../doc')));
+  app.use(mount('/static', serve(path.join(__dirname, '/../../static'))));
   app.use(RequestId);
   app.use(parseState);
   app.use(ErrorHandling);

@@ -3,6 +3,7 @@ const { _ } = require('lodash');
 const constants = require('../../helpers/constants');
 
 const uuid = '[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}';
+const imgId = '[0-9^a-z]+.[png,jpg]+';
 const intId = '[0-9]+';
 const mobilePhone = '[0-9]{11,20}';
 const r = constants.roles;
@@ -16,6 +17,7 @@ const excludeRoles = (roles, toExclude) => {
 const rules = [
   //Static
   { path: '^/doc', roles: ['*'], methods: ['GET'], action: actions.allow },
+  { path: `^/static/${imgId}`, roles: ['*'], methods: ['GET'], action: actions.allow },
 
   //Users
   { path: '^/user', roles: [r.user, r.admin], methods: ['GET'], action: actions.allow },
