@@ -129,10 +129,15 @@ const remove = async (ctx) => {
 
 /**
  * @api {get} /service Получение сервисов
+ * @apiQuery {Number} [template] ID шаблона, фильтрация по шаблонам
+ * @apiQuery {Number} [is_active] 1/0 true/false фильтрация по активности сервисов
+ * @apiQuery {Number} [products.is_active] 1/0 true/false фильтрация по активности продуктов
+ * @apiQuery {Number} [plans.is_active] 1/0 true/false фильтрация по активности тарифов
+ * @apiQuery {Number} [plans.plans_options.is_active] 1/0 true/false фильтрация по активности опций тарифов
  * @apiGroup Services
  */
 const getAll = async (ctx) => {
-    ctx.body = await Services.getAllFront();
+    ctx.body = await Services.getAllFront(ctx);
 };
 
 /**

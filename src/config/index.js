@@ -10,6 +10,10 @@ const sms = {
   login: env.SMS_LOGIN || 'zaplatisto',
   password: env.SMS_PASSWORD || 'zxcasd12'
 }
+const payment = {
+  terminal: env.PAY_TERMINAL || '1655154920104DEMO',
+  password: env.PAY_PASSWORD || '3yk5r1fb50ek51tu'
+}
 
 const defaultConfig = {
   serviceName,
@@ -17,7 +21,8 @@ const defaultConfig = {
   host,
   jwtSecret,
   expiresIn,
-  sms
+  sms,
+  payment
 };
 
 const config = {

@@ -1,6 +1,6 @@
-const { getLogger } = require("log4js");
-
 const tableName = 'services';
+const { _ } = require('lodash');
+const { getLogger } = require('log4js');
 
 /**
  * Возвращает модель сервиса
@@ -87,19 +87,52 @@ const model = (sequelize, DataTypes) => {
     return Services.findOne(options);
   };
 
-  Services.getAllFront = () => {
-    return Services.findAll({
+  Services.getAllFront = (ctx) => {
+    let where = {};
+    let where_products = {};
+    let where_plans = {};
+    let where_plans_options = {};
+    if(_.has(ctx.query, 'template') && _.isNumber(+ctx.query.template)){
+      where.template = +ctx.query.template;
+    }
+    if(_.has(ctx.query, 'is_active') && _.isNumber(+ctx.query.is_active)){
+      where.is_active = +ctx.query.is_active;
+    }
+    if(_.has(ctx.query, 'plans.is_active') && _.isNumber(+ctx.query['plans.is_active'])){
+      where_plans.is_active = +ctx.query['plans.is_active'];
+    }
+    if(_.has(ctx.query, 'plans.plans_options.is_active') && _.isNumber(+ctx.query['plans.plans_options.is_active'])){
+      where_plans_options.is_active = +ctx.query['plans.plans_options.is_active'];
+    }
+    if(_.has(ctx.query, 'products.is_active') && _.isNumber(+ctx.query['products.is_active'])){
+      where_products.is_active = +ctx.query['products.is_active'];
+    }
+
+    return Services.findAll({ 
+      where,
       include: [{
-        model: sequelize.models.plans,
-        as: 'plans'
-      },
-      {
-        model: sequelize.models.products,
-        as: 'products',
-        include: [{
-          model: sequelize.models.plans,
-          as: 'plans'
-        }]
+        association: 'plans',
+        where: where_plans,
+        required: false,
+        include: {
+          association: 'plans_options',
+          where: where_plans_options,
+          required: false
+        }
+      }, {
+        association: 'products',
+        where: where_products,
+        required: false,
+        include: {
+          association: 'plans',
+          where: where_plans,
+          required: false,
+          include: {
+            association: 'plans_options',
+            where: where_plans_options,
+            required: false
+          }
+        }
       }]
     });
   }

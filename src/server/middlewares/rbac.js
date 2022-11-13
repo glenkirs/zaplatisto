@@ -9,7 +9,7 @@ const checkMethod = (ruleMethods, requestMethod) => (ruleMethods.indexOf(request
 
 const testRbac = (rules, user, path, method, userAgent) => {
   for (let i = 0; i < rules.length; i += 1) {
-    ////logger.debug(path, rules[i].path, checkPath(rules[i].path, path), checkMethod(rules[i].methods, method), checkRole(rules[i].roles, user.role), checkAction(rules[i].action));
+    //logger.debug(path, rules[i].path, checkPath(rules[i].path, path), checkMethod(rules[i].methods, method), checkRole(rules[i].roles, user.role), checkAction(rules[i].action));
     if (checkPath(rules[i].path, path)
       && checkMethod(rules[i].methods, method)
       && checkRole(rules[i].roles, user.role)

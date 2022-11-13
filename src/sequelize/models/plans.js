@@ -82,15 +82,37 @@ const model = (sequelize, DataTypes) => {
       foreignKey: 'product',
       targetKey: 'id',
     });
+    Plan.PlansOptions = Plan.hasMany(models.plans_options, {
+      as: 'plans_options',
+      foreignKey: 'plan',
+      sourceKey: 'id',
+    });
   };
 
-  Plan.getAllFront = () => {
-    return Plan.findAll();
+  Plan.getAllFront = (ctx) => {
+    let where = {};
+    let where_include = {};
+    if(_.has(ctx.query, 'service') && _.isNumber(+ctx.query.service)){
+      where.service = +ctx.query.service;
+    }
+    if(_.has(ctx.query, 'product') && _.isNumber(+ctx.query.product)){
+      where.product = +ctx.query.product;
+    }
+    if(_.has(ctx.query, 'is_active') && _.isNumber(+ctx.query.is_active)){
+      where.is_active = +ctx.query.is_active;
+    }
+    if(_.has(ctx.query, 'plans_options.is_active') && _.isNumber(+ctx.query['plans_options.is_active'])){
+      where_include.is_active = +ctx.query['plans_options.is_active'];
+    }
+    return Plan.findAll({ where, include: { association: 'plans_options', where: where_include } });
   }
 
   Plan.getOneFront = id => {
     const where = { id };
-    const options = { where };
+    const options = {
+      where,
+      include: 'plans_options'
+    };
     return Plan.findOne(options);
   }
 
@@ -98,6 +120,7 @@ const model = (sequelize, DataTypes) => {
     const where = { id };
     const options = {
       where,
+      include: 'plans_options'
     };
 
     return Plan.findOne(options);

@@ -141,10 +141,14 @@ const remove = async (ctx) => {
 
 /**
  * @api {get} /product Получение продуктов
+ * @apiQuery {Number} [service] ID сервиса, фильтрация по сервису
+ * @apiQuery {Number} [is_active] 1/0 true/false фильтрация по активности опций тарифов
+ * @apiQuery {Number} [plans.is_active] 1/0 true/false фильтрация по активности опций тарифов
+ * @apiQuery {Number} [plans.plans_options.is_active] 1/0 true/false фильтрация по активности опций тарифов
  * @apiGroup Products
  */
 const getAll = async (ctx) => {
-    ctx.body = await Products.getAllFront();
+    ctx.body = await Products.getAllFront(ctx);
 };
 
 /**

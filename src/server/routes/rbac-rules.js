@@ -36,6 +36,11 @@ const rules = [
   { path: '^/product', roles: ['*'], methods: ['GET'], action: actions.allow },
   { path: `^/product/${intId}`, roles: ['*'], methods: ['GET'], action: actions.allow },
 
+  //Plan Options
+  { path: '^/plan/options', roles: [r.admin], methods: ['POST', 'PUT', 'DELETE'], action: actions.allow },
+  { path: '^/plan/options', roles: ['*'], methods: ['GET'], action: actions.allow },
+  { path: `^/plan/options/${intId}`, roles: ['*'], methods: ['GET'], action: actions.allow },
+
   //Plan
   { path: '^/plan', roles: [r.admin], methods: ['POST', 'PUT', 'DELETE'], action: actions.allow },
   { path: '^/plan', roles: ['*'], methods: ['GET'], action: actions.allow },

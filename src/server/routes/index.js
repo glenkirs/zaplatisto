@@ -4,6 +4,7 @@ const user = require('../../controllers/user');
 const service = require('../../controllers/service');
 const product = require('../../controllers/product');
 const plan = require('../../controllers/plan');
+const planOptions = require('../../controllers/planOptions');
 const library = require('../../controllers/library');
 const order = require('../../controllers/order');
 
@@ -34,6 +35,13 @@ router
   .put('/product/:id', product.edit)
   .del('/product/:id', product.remove)
 
+  //Plan Options
+  .get('/plan/options', planOptions.getAll)
+  .post('/plan/options', planOptions.add)
+  .get('/plan/options/:id', planOptions.getOne)
+  .put('/plan/options/:id', planOptions.edit)
+  .del('/plan/options/:id', planOptions.remove)
+
   //Plan
   .get('/plan', plan.getAll)
   .post('/plan', plan.add)
@@ -53,7 +61,7 @@ router
   //Role
   .get('/role', library.getRole)
 
-  //Plan
+  //Order
   .get('/order', order.getAll)
   .post('/order', order.add)
   .get('/order/:id', order.getOne)

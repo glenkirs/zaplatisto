@@ -181,10 +181,14 @@ const remove = async (ctx) => {
 
 /**
  * @api {get} /plan Получение тарифов
+ * @apiQuery {Number} [service] ID сервиса, фильтрация по сервису
+ * @apiQuery {Number} [product] ID продукта, фильтрация по продукту
+ * @apiQuery {Number} [is_active] 1/0 true/false фильтрация по активности опций тарифов
+ * @apiQuery {Number} [plans_options.is_active] 1/0 true/false фильтрация по активности опций тарифов
  * @apiGroup Plans
  */
 const getAll = async (ctx) => {
-    ctx.body = await Plans.getAllFront();
+    ctx.body = await Plans.getAllFront(ctx);
 };
 
 /**
