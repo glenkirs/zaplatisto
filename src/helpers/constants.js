@@ -25,6 +25,12 @@ const billing = {
     1: 'Год',
 };
 
+const order_status = {
+    0: 'Новый',
+    1: 'Оплачен',
+    2: 'Отменён',
+};
+
 const percent_project = process.env.PERCENT_PROJECT ?? 20;
 
 module.exports = {
@@ -33,5 +39,6 @@ module.exports = {
     currency,
     billing,
     template,
-    percent_project
+    percent_project,
+    order_status
 }

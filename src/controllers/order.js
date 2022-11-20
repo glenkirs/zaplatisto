@@ -231,10 +231,24 @@ const getOne = async (ctx) => {
     ctx.body = 'OK';
 };
 
+/**
+ * @api {get} /order/status Получение статусов заказов
+ * @apiGroup Library
+ */
+ const statuses = async (ctx) => {
+    ctx.body = Object.values(constants.order_status).map((item, i) => {
+      return {
+        id: i,
+        name: item
+      }
+    })
+  };
+
 module.exports = {
   add,
   remove,
   getAll,
   getOne,
   status,
+  statuses,
 }

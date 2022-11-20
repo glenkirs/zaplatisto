@@ -70,6 +70,7 @@ router
   .get('/role', library.getRole)
 
   //Order
+  .get('/order/statuses', order.statuses)
   .get('/order', order.getAll)
   .post('/order', order.add)
   .get('/order/:id', order.getOne)

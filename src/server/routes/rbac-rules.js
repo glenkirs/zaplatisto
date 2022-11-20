@@ -67,6 +67,7 @@ const rules = [
   { path: `^/order/${intId}`, roles: [r.admin, r.user], methods: ['GET'], action: actions.allow },
   { path: `^/order/${intId}`, roles: [r.admin], methods: ['PUT', 'DELETE'], action: actions.allow },
   { path: '^/order/status', roles: ['*'], methods: ['POST'], action: actions.allow },
+  { path: '^/order/statuses', roles: ['*'], methods: ['GET'], action: actions.allow },
 ];
 
 rules.forEach(rule => (rule.path = new RegExp(rule.path)));
