@@ -5,6 +5,11 @@ const path = require('path');
 const fs = require('fs');
 const errors = require('./errors');
 const { v4: uuidv4 } = require('uuid');
+const request = require('request-promise-native');
+const constants = require('./constants');
+const CryptoJS = require('crypto-js');
+const config = require('../config');
+const { exec } = require('child_process');
 
 /**
 * Валидация телефона
@@ -32,6 +37,39 @@ const validateEmail = (email) => {
 */
 const generateSmsCode = () => {
     return Math.floor(Math.random() * (9999 - 1000 + 1)) + 1000;
+}
+
+const generatePassword = (length, options) => {
+    const optionsChars = {
+        digits: "1234567890",
+        lowercase: "abcdefghijklmnopqrstuvwxyz",
+        uppercase: "ABCDEFGHIJKLMNOPQRSTUVWXYZ",
+        symbols: "@$!%&"
+    }
+    const chars = [];
+    for (let key in options) {
+        if (options.hasOwnProperty(key) && options[key] && optionsChars.hasOwnProperty(key)) {
+            chars.push(optionsChars[key]);
+        }
+    }
+
+    if (!chars.length)
+        return '';
+
+    let password = "";
+
+    for (let j = 0; j < chars.length; j++) {
+        password += chars[j].charAt(Math.floor(Math.random() * chars[j].length));
+    }
+    if (length > chars.length) {
+        length = length - chars.length;
+        for (let i = 0; i < length; i++) {
+            const index = Math.floor(Math.random() * chars.length);
+            password += chars[index].charAt(Math.floor(Math.random() * chars[index].length));
+        }
+    }
+
+    return password;
 }
 
 /**
@@ -87,6 +125,87 @@ const deleteFile = async (path) => {
     });
 }
 
+/**
+* Получение валют
+* @return {Array} Массив доступных и актуальной цены валют
+*/
+const currencyList = async () => {
+    const options = {
+        method: 'GET',
+        uri: 'https://www.cbr-xml-daily.ru/daily_json.js',
+        json: true
+    }
+    const list = await request(options);
+
+    return Object.values(constants.currency).map((item, i) => {
+        let name, price;
+        switch(i){
+            case 0:
+                name = 'RUB';
+                price = 1 + ((1*constants.percent_project)/100);
+                break;
+            case 1:
+                name = 'USD';
+                price = list.Valute.USD.Value + ((list.Valute.USD.Value*constants.percent_project)/100);
+                break;
+        }
+        return {
+            id: i,
+            name: name,
+            price: price
+        }
+    });
+}
+
+/**
+* Получение валют
+* @return {Float} Цена валюты на проекте
+*/
+const currencyById = async (currency) => {
+    const options = {
+        method: 'GET',
+        uri: 'https://www.cbr-xml-daily.ru/daily_json.js',
+        json: true
+    }
+    const list = await request(options);
+
+    switch(currency){
+        case 0:
+            return 1 + ((1*constants.percent_project)/100);
+        case 1:
+            return list.Valute.USD.Value + ((list.Valute.USD.Value*constants.percent_project)/100);
+    }
+}
+
+/**
+* Генерация Email аккаунта
+* @return {Json} Данные аккаунта
+*/
+const generateEmailAccount = async (user) => {
+    const name = `account_${user.id}`;
+    const password = generatePassword(9, {digits: true, lowercase: true, uppercase: true, symbols: true});
+
+    return {
+        login: `${name}@zaplatisto.ru`,
+        password: CryptoJS.AES.encrypt(password, config.passSecret).toString()
+    }
+}
+
+/**
+* Генерация Email аккаунта
+* @return {Json} Данные аккаунта
+*/
+const createEmailAccount = async (user) => {
+    return new Promise(function(resolve, reject) {
+        const bytes  = CryptoJS.AES.decrypt(user.password, config.passSecret);
+        const pass = bytes.toString(CryptoJS.enc.Utf8);
+        exec(`useradd -p $(openssl passwd -crypt ${pass}) ${user.login}`, (error, stdout, stderr) => {
+            resolve(stdout);
+        });
+        resolve();
+    });
+}
+
 module.exports = {
     validatePhone,
     generateSmsCode,
@@ -94,4 +213,8 @@ module.exports = {
     checkMinutes,
     uploadFile,
     deleteFile,
+    currencyList,
+    currencyById,
+    generateEmailAccount,
+    createEmailAccount
 };

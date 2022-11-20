@@ -1,6 +1,7 @@
 const Router = require('koa-router');
 const config = require('../../config/sequelize');
 const user = require('../../controllers/user');
+const userAccounts = require('../../controllers/userAccounts');
 const service = require('../../controllers/service');
 const product = require('../../controllers/product');
 const plan = require('../../controllers/plan');
@@ -20,6 +21,12 @@ router
   .get('/user/:id', user.infoById)
   .put('/user/:id', user.update)
   .del('/user/:id', user.deleteUser)
+  //Users accounts
+  .get('/user/accounts', userAccounts.getAll)
+  .get('/user/accounts/:id', userAccounts.info)
+  .get('/user/accounts/:id/password', userAccounts.decryptPass)
+  .put('/user/accounts/:id', userAccounts.update)
+  .del('/user/accounts/:id', userAccounts.deleteAccount)
 
   //Service
   .get('/service', service.getAll)
@@ -51,6 +58,7 @@ router
 
   //Currency
   .get('/currency', library.getCurrency)
+  .get('/currency/calc', library.getCurrencyCalc)
 
   //Billing
   .get('/billing', library.getBilling)
@@ -65,8 +73,8 @@ router
   .get('/order', order.getAll)
   .post('/order', order.add)
   .get('/order/:id', order.getOne)
-  .put('/order/:id', order.edit)
   .del('/order/:id', order.remove)
+  .post('/order/status', order.status)
 ;
 
 module.exports = router;

@@ -25,10 +25,13 @@ const billing = {
     1: 'Год',
 };
 
+const percent_project = process.env.PERCENT_PROJECT ?? 20;
+
 module.exports = {
     roles,
     actions,
     currency,
     billing,
-    template
+    template,
+    percent_project
 }

@@ -143,14 +143,22 @@ const model = (sequelize, DataTypes) => {
       where,
       include: [{
         model: sequelize.models.plans,
-        as: 'plans'
+        as: 'plans',
+        include: {
+          association: 'plans_options',
+          required: false
+        }
       },
       {
         model: sequelize.models.products,
         as: 'products',
         include: [{
           model: sequelize.models.plans,
-          as: 'plans'
+          as: 'plans',
+          include: {
+            association: 'plans_options',
+            required: false
+          }
         }]
       }]
     };

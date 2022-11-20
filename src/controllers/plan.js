@@ -15,6 +15,7 @@ const Products = models.products;
  * @apiBody {Json} [descriptions] Описания тарифа в формате - ["Title", "Title1", "Title2"]
  * @apiBody {Json} [prices] Цены тарифного плана в формате - [{price:1000, currency:0, billing:1}, {price:1300, currency:1, billing:0}]
  * @apiBody {Number} [service] ID сервиса
+ * @apiBody {Number} [product] ID продукта
  * @apiBody {Boolean} [is_active] Активность тарифа
  * @apiBody {Boolean} [is_members] Возможна оплата за пользователей
  * @apiSuccess (200) {String} status Успешное добавление
@@ -87,6 +88,7 @@ const add = async (ctx) => {
  * @apiBody {Json} [prices] Цены тарифного плана в формате - [{price:1000, currency:0, billing:1}, {price:1300, currency:1, billing:0}]
  * @apiBody {Number} [service] ID сервиса
  * @apiBody {Number} [plan] ID тарифа
+ * @apiBody {Number} [product] ID продукта
  * @apiBody {Boolean} [is_active] Активность тарифа
  * @apiBody {Boolean} [is_members] Возможна оплата за пользователей
  * @apiSuccess (200) {String} status Успешное редактирование

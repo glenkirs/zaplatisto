@@ -25,6 +25,9 @@ const rules = [
   { path: '^/user/auth', roles: ['*'], methods: ['POST'], action: actions.allow },
   { path: '^/user/sms', roles: ['*'], methods: ['POST'], action: actions.allow },
   { path: `^/user/${intId}`, roles: [r.user, r.admin], methods: ['GET', 'PUT', 'DELETE'], action: actions.allow },
+  { path: '^/user/accounts', roles: [r.admin], methods: ['GET'], action: actions.allow },
+  { path: `^/user/accounts/${intId}`, roles: [r.user, r.admin], methods: ['GET'], action: actions.allow },
+  { path: `^/user/accounts/${intId}`, roles: [r.admin], methods: ['PUT', 'DELETE'], action: actions.allow },
 
   //Service
   { path: '^/service', roles: [r.admin], methods: ['POST', 'PUT', 'DELETE'], action: actions.allow },
@@ -48,6 +51,7 @@ const rules = [
 
   //Currency
   { path: '^/currency', roles: ['*'], methods: ['GET'], action: actions.allow },
+  { path: '^/currency/calc', roles: ['*'], methods: ['GET'], action: actions.allow },
 
   //Billing
   { path: '^/billing', roles: ['*'], methods: ['GET'], action: actions.allow },
@@ -62,6 +66,7 @@ const rules = [
   { path: '^/order', roles: [r.admin, r.user], methods: ['POST', 'GET'], action: actions.allow },
   { path: `^/order/${intId}`, roles: [r.admin, r.user], methods: ['GET'], action: actions.allow },
   { path: `^/order/${intId}`, roles: [r.admin], methods: ['PUT', 'DELETE'], action: actions.allow },
+  { path: '^/order/status', roles: ['*'], methods: ['POST'], action: actions.allow },
 ];
 
 rules.forEach(rule => (rule.path = new RegExp(rule.path)));

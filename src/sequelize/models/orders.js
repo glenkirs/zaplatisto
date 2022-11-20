@@ -18,26 +18,62 @@ const model = (sequelize, DataTypes) => {
       type: DataTypes.INTEGER.UNSIGNED,
     },
     service: {
-      type: DataTypes.INTEGER,
+      type: DataTypes.INTEGER.UNSIGNED,
       allowNull: false,
       default: 0,
     },
     product: {
-      type: DataTypes.INTEGER,
+      type: DataTypes.INTEGER.UNSIGNED,
       allowNull: true,
       default: 0,
     },
     plan: {
-      type: DataTypes.INTEGER,
-      allowNull: false,
+      type: DataTypes.INTEGER.UNSIGNED,
+      allowNull: true,
       default: 0,
     },
-    status: {
+    price: {
+      type: DataTypes.JSON,
+      defaultValue: {},
+      allowNull: true,
+      get: function () {
+        return JSON.parse(this.getDataValue('price'));
+      },
+    },
+    options: {
+      type: DataTypes.JSON,
+      defaultValue: [],
+      allowNull: true,
+      get: function () {
+        return JSON.parse(this.getDataValue('options'));
+      },
+    },
+    members: {
       type: DataTypes.INTEGER,
+      allowNull: true,
+      default: 0,
+    },
+    total: {
+      type: DataTypes.FLOAT,
       allowNull: false,
       default: 0,
     },
     user: {
+      type: DataTypes.INTEGER.UNSIGNED,
+      allowNull: false,
+      default: 0,
+    },
+    user_account: {
+      type: DataTypes.INTEGER.UNSIGNED,
+      allowNull: false,
+      default: 0,
+    },
+    pay_url: {
+      type: DataTypes.STRING,
+      defaultValue: null,
+      allowNull: true,
+    },
+    status: {
       type: DataTypes.INTEGER,
       allowNull: false,
       default: 0,
@@ -66,26 +102,31 @@ const model = (sequelize, DataTypes) => {
   });
 
   Orders.associate = (models) => {
-    Orders.belongsTo(models.services, {
-      as: 'services',
-      foreignKey: 'service',
-      targetKey: 'id',
+    Orders.hasOne(models.services, {
+      as: 'service_info',
+      foreignKey: 'id',
+      sourceKey: 'service',
     });
-    /*Orders.belongsTo(models.plan, {
-      as: 'plan',
-      foreignKey: 'plan',
-      targetKey: 'id',
+    Orders.hasOne(models.products, {
+      as: 'product_info',
+      foreignKey: 'id',
+      sourceKey: 'product',
     });
-    Orders.belongsTo(models.user, {
-      as: 'user',
-      foreignKey: 'user',
-      targetKey: 'id',
+    Orders.hasOne(models.plans, {
+      as: 'plan_info',
+      foreignKey: 'id',
+      sourceKey: 'plan',
     });
-    Orders.belongsTo(models.product, {
-      as: 'product',
-      foreignKey: 'product',
-      targetKey: 'id',
-    });*/
+    Orders.hasOne(models.users, {
+      as: 'user_info',
+      foreignKey: 'id',
+      sourceKey: 'user',
+    });
+    Orders.hasOne(models.user_accounts, {
+      as: 'user_account_info',
+      foreignKey: 'id',
+      sourceKey: 'user_account',
+    });
   };
 
   Orders.findById = id => {
@@ -98,12 +139,37 @@ const model = (sequelize, DataTypes) => {
   };
 
   Orders.getAllFront = () => {
-    return Orders.findAll();
+    return Orders.findAll({
+      include: [{
+        association: 'service_info'
+      },{
+        association: 'product_info'
+      },{
+        association: 'plan_info'
+      },{
+        association: 'user_info'
+      },{
+        association: 'user_account_info'
+      }]
+    });
   }
 
   Orders.getOneFront = id => {
     const where = { id };
-    const options = { where };
+    const options = {
+      where,
+      include: [{
+        association: 'service_info'
+      },{
+        association: 'product_info'
+      },{
+        association: 'plan_info'
+      },{
+        association: 'user_info'
+      },{
+        association: 'user_account_info'
+      }]
+    };
     return Orders.findOne(options);
   }
   

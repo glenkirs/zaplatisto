@@ -1,6 +1,5 @@
 const tableName = 'plans_options';
 const { _ } = require('lodash');
-const { getLogger } = require('log4js');
 
 /**
  * Возвращает модель тарифа

@@ -1,6 +1,6 @@
 const constants = require('../helpers/constants');
 const errors = require('../helpers/errors');
-const logger = require('../helpers/logger').getLogger();
+const Utils = require('../helpers/utils');
 
 /**
  * @api {get} /currency Получение валют
@@ -58,8 +58,17 @@ const getCurrency = async (ctx) => {
   }
 };
 
+/**
+ * @api {get} /currency/list Получение курса валют от ЦБ + расчитаный процент проекта
+ * @apiGroup Library
+ */
+ const getCurrencyCalc = async (ctx) => {
+  ctx.body = await Utils.currencyList();
+};
+
 module.exports = {
   getCurrency,
+  getCurrencyCalc,
   getBilling,
   getTemplate,
   getRole,
