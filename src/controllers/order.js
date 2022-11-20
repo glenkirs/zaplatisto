@@ -99,7 +99,7 @@ const add = async (ctx) => {
     total = total * currency;
 
     if(total != body.total){
-        throw new errors.ValidationError(`Неверная сумма!`, 'total');
+        throw new errors.ValidationError(`Неверная сумма! Ожидаемая: ${total}`, 'total');
     }
     
     let create = false, account = false;
