@@ -96,7 +96,7 @@ const add = async (ctx) => {
             total = body.total;
             break;
     }
-    total = total * currency;
+    total = (total * currency).toFixed(2);
 
     if(total != body.total){
         throw new errors.ValidationError(`Неверная сумма! Ожидаемая: ${total}`, 'total');
