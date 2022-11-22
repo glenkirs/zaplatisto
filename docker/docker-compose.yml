@@ -14,6 +14,8 @@ services:
         - 127.0.0.1:3000:3000
     depends_on:
       - database
+    networks:
+      - host 
 
   database:
     container_name: database-$CI_PIPELINE_ID
@@ -28,8 +30,10 @@ services:
       - MYSQL_PASSWORD=${SEQUELIZE_PASS}
       - MYSQL_USER=${SEQUELIZE_USER}
       - MYSQL_DATABASE=${SEQUELIZE_DB}
+    networks:
+      - host 
 
-  networks:
-    default:
-      name: dev-network
-      external: true
+networks:
+  host:
+    name: host
+    external: true
