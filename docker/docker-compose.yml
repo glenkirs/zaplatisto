@@ -28,3 +28,8 @@ services:
       - MYSQL_PASSWORD=${SEQUELIZE_PASS}
       - MYSQL_USER=${SEQUELIZE_USER}
       - MYSQL_DATABASE=${SEQUELIZE_DB}
+
+  networks:
+    default:
+      name: dev-network
+      external: true
