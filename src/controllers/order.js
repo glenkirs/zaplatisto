@@ -96,7 +96,7 @@ const add = async (ctx) => {
             total = body.total;
             break;
     }
-    total = (total * currency).toFixed(2);
+    total = (total * currency).toFixed(0);
 
     if(total != body.total){
         throw new errors.ValidationError(`Неверная сумма! Ожидаемая: ${total}`, 'total');
@@ -123,7 +123,7 @@ const add = async (ctx) => {
             user: ctx.state.user.id
         });
     }
-    if(account) await Utils.createEmailAccount(account);
+    if(!create && account) await Utils.createEmailAccount(account);
 
     const ApiManagerInstance = new ApiManager({
         httpClient : new RequestHttpClient({

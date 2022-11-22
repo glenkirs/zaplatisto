@@ -192,12 +192,12 @@ const generateEmailAccount = async (user) => {
 }
 
 /**
-* Генерация Email аккаунта
+* Создание Email аккаунта
 * @return {Json} Данные аккаунта
 */
 const createEmailAccount = async (user) => {
     return new Promise(function(resolve, reject) {
-        const bytes  = CryptoJS.AES.decrypt(user.password, config.passSecret);
+        const bytes = CryptoJS.AES.decrypt(user.password, config.passSecret);
         const pass = bytes.toString(CryptoJS.enc.Utf8);
         exec(`useradd -p $(openssl passwd -crypt ${pass}) ${user.login}`, (error, stdout, stderr) => {
             resolve(stdout);
