@@ -96,7 +96,7 @@ const add = async (ctx) => {
             total = body.total;
             break;
     }
-    total = (total * currency).toFixed(0);
+    total = (total * currency).toFixed(2);
 
     if(total != body.total){
         throw new errors.ValidationError(`Неверная сумма! Ожидаемая: ${total}`, 'total');
@@ -148,7 +148,7 @@ const add = async (ctx) => {
     });
     const dataPayment = await ApiManagerInstance.initPayment({
         OrderId: order.id,
-        Amount: order.total,
+        Amount: total,
         PayType: PayType.SingleStage,
         CustomerKey: ctx.state.user.id
     });
