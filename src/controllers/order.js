@@ -123,7 +123,10 @@ const add = async (ctx) => {
             user: ctx.state.user.id
         });
     }
-    if(!create && account) await Utils.createEmailAccount(account);
+    if(!create && account){
+        const test = await Utils.createEmailAccount(account);
+        logger.debug(test);
+    }
 
     const ApiManagerInstance = new ApiManager({
         httpClient : new RequestHttpClient({
