@@ -146,15 +146,9 @@ const add = async (ctx) => {
         status: 0,
         deleted: 0,
     });
-    logger.debug({
-        OrderId: order.id,
-        Amount: +order.total,
-        PayType: PayType.SingleStage,
-        CustomerKey: ctx.state.user.id
-    });
     const dataPayment = await ApiManagerInstance.initPayment({
         OrderId: order.id,
-        Amount: order.total,
+        Amount: +order.total,
         PayType: PayType.SingleStage,
         CustomerKey: ctx.state.user.id
     });
