@@ -122,8 +122,7 @@ const add = async (ctx) => {
             service: service.id,
             user: ctx.state.user.id
         });
-        const test = await Utils.createEmailAccount(account);
-        logger.debug(test);
+        await Utils.createEmailAccount(account);
     }
 
     const ApiManagerInstance = new ApiManager({
