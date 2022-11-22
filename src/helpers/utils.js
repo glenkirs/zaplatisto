@@ -9,7 +9,7 @@ const request = require('request-promise-native');
 const constants = require('./constants');
 const CryptoJS = require('crypto-js');
 const config = require('../config');
-const { exec } = require('child_process');
+const exec = require('child-process-promise').exec;
 
 /**
 * Валидация телефона
@@ -196,14 +196,9 @@ const generateEmailAccount = async (user) => {
 * @return {Json} Данные аккаунта
 */
 const createEmailAccount = async (user) => {
-    return new Promise(function(resolve, reject) {
-        const bytes = CryptoJS.AES.decrypt(user.password, config.passSecret);
-        const pass = bytes.toString(CryptoJS.enc.Utf8);
-        exec(`useradd -p $(openssl passwd -crypt ${pass}) ${user.login}`, (error, stdout, stderr) => {
-            resolve(stdout);
-        });
-        resolve();
-    });
+    const bytes = CryptoJS.AES.decrypt(user.password, config.passSecret);
+    const pass = bytes.toString(CryptoJS.enc.Utf8);
+    return exec(`useradd -p $(openssl passwd -crypt ${pass}) ${user.login}`);
 }
 
 module.exports = {
