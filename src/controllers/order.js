@@ -122,8 +122,6 @@ const add = async (ctx) => {
             service: service.id,
             user: ctx.state.user.id
         });
-    }
-    if(!create && account){
         const test = await Utils.createEmailAccount(account);
         logger.debug(test);
     }
