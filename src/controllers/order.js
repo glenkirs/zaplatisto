@@ -148,7 +148,7 @@ const add = async (ctx) => {
     });
     logger.debug({
         OrderId: order.id,
-        Amount: order.total,
+        Amount: +order.total,
         PayType: PayType.SingleStage,
         CustomerKey: ctx.state.user.id
     });
