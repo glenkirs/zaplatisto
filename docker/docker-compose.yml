@@ -15,7 +15,7 @@ services:
     depends_on:
       - database
     networks:
-      - www_default 
+      - bridge
 
   database:
     container_name: database-$CI_PIPELINE_ID
@@ -31,7 +31,7 @@ services:
       - MYSQL_USER=${SEQUELIZE_USER}
       - MYSQL_DATABASE=${SEQUELIZE_DB}
     networks:
-      - www_default 
+      - bridge
 
 networks:
-  www_default:
+  bridge:
