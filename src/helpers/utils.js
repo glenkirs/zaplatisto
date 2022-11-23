@@ -202,7 +202,7 @@ const createEmailAccount = async (account, user) => {
         const options = {
             body: {
                 name: user.name,
-                user: account.replace(/[A-Z\d][A-Z\d_-]{5,10}|[A-Z0-9._%+-]+/i, ''),
+                user: account.login.replace(/[A-Z\d][A-Z\d_-]{5,10}|[A-Z0-9._%+-]+/i, ''),
                 domain: 'maildev.zaplatisto.ru',
                 passwordPlaintext: pass
             },
