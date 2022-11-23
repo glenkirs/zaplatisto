@@ -201,14 +201,18 @@ const createEmailAccount = async (account, user) => {
 
         const options = {
             auth: {
-                user: 'admin@maildev.zaplatisto.ru',
-                pass: '67K2TWH7qG'
+                user: config.email.user,
+                pass: config.email.password
             },
             body: {
                 name: user.name || '',
                 user: account.login.replace(/@[A-Z0-9.-]+\.[A-Z]{2,4}/i, ''),
-                domain: 'maildev.zaplatisto.ru',
-                passwordPlaintext: pass
+                domain: config.email.domain,
+                passwordPlaintext: pass,
+                superAdmin: false,
+                discard: false,
+                strictFromDisabled: false,
+                domainAdmin: false
             },
             uri: `${config.services.mail}/admin/api/v1/boxes`,
             method: 'POST',

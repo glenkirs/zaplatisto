@@ -15,6 +15,11 @@ const payment = {
   terminal: env.PAY_TERMINAL || '1655154920104DEMO',
   password: env.PAY_PASSWORD || '3yk5r1fb50ek51tu'
 }
+const email = {
+  user: env.EMAL_USER || 'admin@maildev.zaplatisto.ru',
+  password: env.EMAL_PASSWORD || '67K2TWH7qG',
+  domain: env.EMAL_DOMAIN || 'maildev.zaplatisto.ru'
+}
 
 const defaultConfig = {
   serviceName,
@@ -24,7 +29,8 @@ const defaultConfig = {
   expiresIn,
   passSecret,
   sms,
-  payment
+  payment,
+  email
 };
 
 const config = {
