@@ -9,7 +9,6 @@ const request = require('request-promise-native');
 const constants = require('./constants');
 const CryptoJS = require('crypto-js');
 const config = require('../config');
-const exec = require('child-process-promise').exec;
 
 /**
 * Валидация телефона
@@ -195,10 +194,28 @@ const generateEmailAccount = async (user) => {
 * Создание Email аккаунта
 * @return {Json} Данные аккаунта
 */
-const createEmailAccount = async (user) => {
-    const bytes = CryptoJS.AES.decrypt(user.password, config.passSecret);
-    const pass = bytes.toString(CryptoJS.enc.Utf8);
-    return exec(`useradd -p $(openssl passwd -crypt ${pass}) ${user.login}`);
+const createEmailAccount = async (account, user) => {
+    try {
+        const bytes = CryptoJS.AES.decrypt(account.password, config.passSecret);
+        const pass = bytes.toString(CryptoJS.enc.Utf8);
+
+        const options = {
+            body: {
+                name: user.name,
+                user: account.replace(/[A-Z\d][A-Z\d_-]{5,10}|[A-Z0-9._%+-]+/i, ''),
+                domain: 'maildev.zaplatisto.ru',
+                passwordPlaintext: pass
+            },
+            uri: `${config.services.mail}/admin/api/v1/boxes`,
+            method: 'POST',
+            json: true,
+        };
+
+        return await request(options);
+    } catch (err) {
+        logger.error(state, { message: 'Can\'t create user email account', err });
+        throw err;
+    }
 }
 
 module.exports = {

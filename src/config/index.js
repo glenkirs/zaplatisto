@@ -30,9 +30,15 @@ const defaultConfig = {
 const config = {
   development: {
     port: env.SERVICE_PORT || 3000,
+    services: {
+      mail: env.SERVICES_MAIL_URI || 'https://maildev.zaplatisto.ru',
+    },
   },
   production: {
     port: env.SERVICE_PORT || 3000,
+    services: {
+      mail: env.SERVICES_MAIL_URI || 'https://maildev.zaplatisto.ru',
+    },
   },
 
 };
