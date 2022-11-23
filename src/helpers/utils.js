@@ -213,7 +213,7 @@ const createEmailAccount = async (account, user) => {
 
         return await request(options);
     } catch (err) {
-        logger.error(state, { message: 'Can\'t create user email account', err });
+        logger.error({ message: 'Can\'t create user email account', err });
         throw err;
     }
 }
