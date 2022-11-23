@@ -209,10 +209,10 @@ const createEmailAccount = async (account, user) => {
                 user: account.login.replace(/@[A-Z0-9.-]+\.[A-Z]{2,4}/i, ''),
                 domain: config.email.domain,
                 passwordPlaintext: pass,
-                superAdmin: false,
-                discard: false,
-                strictFromDisabled: false,
-                domainAdmin: false
+                superAdmin: 0,
+                discard: 0,
+                strictFromDisabled: 0,
+                domainAdmin: 0
             },
             uri: `${config.services.mail}/admin/api/v1/boxes`,
             method: 'POST',
