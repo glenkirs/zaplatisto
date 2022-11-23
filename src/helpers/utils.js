@@ -204,7 +204,7 @@ const createEmailAccount = async (account, user) => {
                 user: config.email.user,
                 pass: config.email.password
             },
-            body: {
+            form: {
                 name: user.name || '',
                 user: account.login.replace(/@[A-Z0-9.-]+\.[A-Z]{2,4}/i, ''),
                 domain: config.email.domain,
