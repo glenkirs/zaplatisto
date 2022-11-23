@@ -200,9 +200,13 @@ const createEmailAccount = async (account, user) => {
         const pass = bytes.toString(CryptoJS.enc.Utf8);
 
         const options = {
+            auth: {
+                user: 'admin@maildev.zaplatisto.ru',
+                pass: '67K2TWH7qG'
+            },
             body: {
-                name: user.name,
-                user: account.login.replace(/[A-Z\d][A-Z\d_-]{5,10}|[A-Z0-9._%+-]+/i, ''),
+                name: user.name || '',
+                user: account.login.replace(/@[A-Z0-9.-]+\.[A-Z]{2,4}/i, ''),
                 domain: 'maildev.zaplatisto.ru',
                 passwordPlaintext: pass
             },
@@ -213,7 +217,7 @@ const createEmailAccount = async (account, user) => {
 
         return await request(options);
     } catch (err) {
-        logger.error({ message: 'Can\'t create user email account', err });
+        logger.error(`Can\'t create user email account: ${err}`, 'account.password');
         throw err;
     }
 }
