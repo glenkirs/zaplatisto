@@ -87,7 +87,7 @@ const model = (sequelize, DataTypes) => {
   UserAccount.getOneFrontByUser = id => {
     const where = { user: id };
     const options = { where };
-    return UserAccount.findOne(options);
+    return UserAccount.findAll(options);
   }
 
   UserAccount.findByUserAndService = (userId, serviceId) => {
