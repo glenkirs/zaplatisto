@@ -205,16 +205,19 @@ const createEmailAccount = async (account, user) => {
                 pass: config.email.password
             },
             formData: {
-                name: user.name || '',
-                user: account.login.replace(/@[A-Z0-9.-]+\.[A-Z]{2,4}/i, ''),
-                domain: config.email.domain,
-                passwordPlaintext: pass,
-                superAdmin: 0,
-                discard: 0,
-                strictFromDisabled: 0,
-                domainAdmin: 0
+                children: {
+                    name: user.name || '',
+                    user: account.login.replace(/@[A-Z0-9.-]+\.[A-Z]{2,4}/i, ''),
+                    domain: config.email.domain,
+                    passwordPlaintext: pass,
+                    referenceId: 0,
+                    superAdmin: 0,
+                    discard: 0,
+                    strictFromDisabled: 0,
+                    domainAdmin: 0
+                }
             },
-            uri: `${config.services.mail}/admin/api/v1/boxes`,
+            uri: `${config.services.mail}/admin/box/new`,
             method: 'POST',
             json: true,
         };
