@@ -67,7 +67,7 @@ const UserAccount = models.user_accounts;
  * @apiGroup UserAccounts
  */
  const info = async (ctx) => {
-  ctx.body = await UserAccount.getOneFront(ctx.params.id);
+  ctx.body = await UserAccount.getOneFrontByUser(ctx.params.id);
 };
 
 /**
