@@ -33,7 +33,7 @@ const UserAccount = models.user_accounts;
     throw new errors.ValidationError(`Аккаунт не найден`, 'id');
   }
   
-  if(user){
+  if(userAccount){
     const pass = CryptoJS.AES.encrypt(body.password, config.passSecret).toString();
     UserAccount.update(
       { login: body.login, password: pass, service: body.service ?? userAccount.service },
