@@ -5,6 +5,7 @@ const models = require('../sequelize/models');
 const logger = require('../helpers/logger').getLogger();
 const config = require('../config');
 const { _ } = require('lodash');
+const CryptoJS = require('crypto-js');
 
 const UserAccount = models.user_accounts;
 
