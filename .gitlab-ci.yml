@@ -25,6 +25,13 @@ build_dev:
     - echo "ENV SEQUELIZE_DB=$SEQUELIZE_DB" >> ${DOCKER_FILE}
     - echo "ENV SEQUELIZE_HOST=$SEQUELIZE_HOST" >> ${DOCKER_FILE}
     - echo "ENV SEQUELIZE_PORT=$SEQUELIZE_PORT" >> ${DOCKER_FILE}
+    - echo "ENV PASS_SECRET=$PASS_SECRET" >> ${DOCKER_FILE}
+    - echo "ENV PAY_PASSWORD=$PAY_PASSWORD" >> ${DOCKER_FILE}
+    - echo "ENV PAY_TERMINAL=$PAY_TERMINAL" >> ${DOCKER_FILE}
+    - echo "ENV SERVICES_MAIL_URI=$SERVICES_MAIL_URI" >> ${DOCKER_FILE}
+    - echo "ENV EMAL_DOMAIN=$EMAL_DOMAIN" >> ${DOCKER_FILE}
+    - echo "ENV EMAL_PASSWORD=$EMAL_PASSWORD" >> ${DOCKER_FILE}
+    - echo "ENV EMAL_USER=$EMAL_USER" >> ${DOCKER_FILE}
     - sed -i "s/https:\/\/gitlab.zaplatisto.ru/https:\/\/gitlab-ci-token:$CI_JOB_TOKEN@gitlab.zaplatisto.ru/g" package.json
     - docker-compose -p ${DOCKER_IMAGE_NAME} -f ${DOCKER_COMPOSE} build --pull --no-cache
     - docker-compose -p ${DOCKER_IMAGE_NAME} -f ${DOCKER_COMPOSE} push
