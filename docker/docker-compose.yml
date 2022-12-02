@@ -2,7 +2,7 @@ version: '3.6'
 
 services:
   app:
-    container_name: app-$CI_PIPELINE_ID
+    container_name: back-$CI_PIPELINE_ID
     image: $CI_REGISTRY_IMAGE/app:$CI_PIPELINE_ID
     build:
       context: ../
@@ -11,7 +11,7 @@ services:
     volumes:
       - /home/uploads/static/:/app/static
     ports:
-        - 127.0.0.1:3001:3001
+        - 127.0.0.1:3001:3000
     depends_on:
       - database
     networks:
