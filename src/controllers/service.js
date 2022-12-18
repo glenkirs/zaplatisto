@@ -65,7 +65,7 @@ const edit = async (ctx) => {
     if(!_.has(body, 'name') || (_.has(body, 'name') && body.name.length < 4)){
         throw new errors.ValidationError(`Не найдено или не валидно поле name`, 'name');
     }
-    if(!_.has(body, 'template') || (_.has(body, 'template') && !Object.values(constants.template).includes(body.template))){
+    if(!_.has(body, 'template') || (_.has(body, 'template') && !Object.keys(constants.template).includes(body.template))){
         throw new errors.ValidationError(`Не найдено или не валидно поле template`, 'template');
     }
     if(!_.has(body, 'is_active')){
@@ -77,7 +77,7 @@ const edit = async (ctx) => {
         throw new errors.NotFoundError(`Сервис не найден`);
     }
     let pathImg = service.img;
-    if(_.has(files, 'img')){
+    if(_.has(files, 'img') && !_.isString(pathImg)){
         pathImg = await Utils.uploadFile(files.img, { width: 100, height: 35 });
     }
     await Services.update(
